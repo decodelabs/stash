@@ -62,7 +62,7 @@ interface Store extends
      * @param positive-int|null $time
      * @return $this
      */
-    public function pileUpPreempt(int $time=null): static;
+    public function pileUpPreempt(int $time = null): static;
 
     /**
      * @param positive-int|null $time
@@ -70,8 +70,8 @@ interface Store extends
      * @return $this
      */
     public function pileUpSleep(
-        int $time=null,
-        int $attempts=null
+        int $time = null,
+        int $attempts = null
     ): static;
 
     /**

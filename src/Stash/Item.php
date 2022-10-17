@@ -11,14 +11,10 @@ namespace DecodeLabs\Stash;
 
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
-use DateTime;
-use DateTimeInterface;
 use DateInterval;
+use DateTimeInterface;
 
 use DecodeLabs\Coercion;
-use DecodeLabs\Exceptional;
-use DecodeLabs\Stash\PileUpPolicy;
-use DecodeLabs\Stash\Store;
 
 use Psr\Cache\CacheItemInterface as CacheItem;
 
@@ -255,7 +251,7 @@ class Item implements CacheItem
      * @param positive-int|null $time
      * @return $this
      */
-    public function pileUpPreempt(int $time=null): static
+    public function pileUpPreempt(int $time = null): static
     {
         $this->pileUpPolicy = PileUpPolicy::PREEMPT;
 
@@ -274,8 +270,8 @@ class Item implements CacheItem
      * @return $this
      */
     public function pileUpSleep(
-        int $time=null,
-        int $attempts=null
+        int $time = null,
+        int $attempts = null
     ): static {
         $this->pileUpPolicy = PileUpPolicy::SLEEP;
 
@@ -494,7 +490,7 @@ class Item implements CacheItem
      */
     public function update(
         mixed $value,
-        DateTimeInterface|DateInterval|string|int|null $ttl=null
+        DateTimeInterface|DateInterval|string|int|null $ttl = null
     ): bool {
         if ($ttl) {
             $this->setExpiration($ttl);
@@ -508,7 +504,7 @@ class Item implements CacheItem
      * Re-store item
      */
     public function extend(
-        DateTimeInterface|DateInterval|string|int|null $ttl=null
+        DateTimeInterface|DateInterval|string|int|null $ttl = null
     ): bool {
         if ($ttl) {
             $this->setExpiration($ttl);

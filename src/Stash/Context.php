@@ -113,7 +113,7 @@ class Context
         }
 
         throw Exceptional::ComponentUnavailable(
-            'No cache drivers available for namespace: '.$namespace
+            'No cache drivers available for namespace: ' . $namespace
         );
     }
 

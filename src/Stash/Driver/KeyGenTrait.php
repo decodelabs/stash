@@ -65,7 +65,9 @@ trait KeyGenTrait
 
         if ($man['children']) {
             throw Exceptional::InvalidArgument(
-                'Invalid cache key', null, $key
+                'Invalid cache key',
+                null,
+                $key
             );
         }
 
@@ -96,7 +98,7 @@ trait KeyGenTrait
     ): string {
         $man = $this->parseKey($namespace, $key);
         $output = $this->buildKey($namespace, $man['normal']);
-        $output = '/^'.preg_quote($output);
+        $output = '/^' . preg_quote($output);
 
         if ($man['self'] && $man['children']) {
             $output .= '.*';
@@ -116,10 +118,10 @@ trait KeyGenTrait
         ?string $key
     ): string {
         $separator = $this->getKeySeparator();
-        $output = $this->prefix.$separator.$namespace.$separator;
+        $output = $this->prefix . $separator . $namespace . $separator;
 
         if ($key !== null) {
-            $output .= str_replace('.', $separator, $key).$separator;
+            $output .= str_replace('.', $separator, $key) . $separator;
         }
 
         return $output;
@@ -132,7 +134,7 @@ trait KeyGenTrait
     {
         $separator = $this->getKeySeparator();
         $key = str_replace('.', $separator, $key);
-        $output = $this->prefix.'!lock'.$separator.md5($namespace.$separator.$key);
+        $output = $this->prefix . '!lock' . $separator . md5($namespace . $separator . $key);
 
         return $output;
     }

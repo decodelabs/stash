@@ -482,8 +482,8 @@ class Generic implements Store
      * Set pile up policy to sleep
      */
     public function pileUpSleep(
-        int $time=null,
-        int $attempts=null
+        int $time = null,
+        int $attempts = null
     ): static {
         $this->pileUpPolicy = PileUpPolicy::SLEEP;
 
@@ -614,7 +614,7 @@ class Generic implements Store
     {
         if (!$item instanceof Item) {
             throw Exceptional::{'InvalidArgument,Psr\\Cache\\InvalidArgumentException'}(
-                'Cache items must implement '.Item::class,
+                'Cache items must implement ' . Item::class,
                 null,
                 $item
             );

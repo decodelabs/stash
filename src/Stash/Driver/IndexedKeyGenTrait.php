@@ -30,7 +30,7 @@ trait IndexedKeyGenTrait
     ): array {
         $separator = $this->getKeySeparator();
         $keyString = '';
-        $pathPrefix = $this->prefix.':p'.$separator;
+        $pathPrefix = $this->prefix . ':p' . $separator;
 
         $time = microtime(true);
 
@@ -45,7 +45,7 @@ trait IndexedKeyGenTrait
 
         foreach ($parts as $i => $part) {
             $keyString .= $part;
-            $pathKey = $pathPrefix.md5($keyString);
+            $pathKey = $pathPrefix . md5($keyString);
 
             if ($i < $count - 1) {
                 if (isset($this->keyCache[$pathKey])) {
@@ -54,12 +54,12 @@ trait IndexedKeyGenTrait
                     $this->keyCache[$pathKey] = $index = $this->getPathIndex($pathKey);
                 }
 
-                $keyString .= '_'.$index.$separator;
+                $keyString .= '_' . $index . $separator;
             }
         }
 
         return [
-            $this->prefix.':c'.$separator.md5($keyString),
+            $this->prefix . ':c' . $separator . md5($keyString),
             $pathKey
         ];
     }
