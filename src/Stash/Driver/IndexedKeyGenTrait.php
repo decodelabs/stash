@@ -18,11 +18,13 @@ trait IndexedKeyGenTrait
      */
     protected array $keyCache = [];
 
-    protected int $keyCacheTime = 0;
-    protected int $keyCacheTimeLimit = 1;
+    protected float $keyCacheTime = 0;
+    protected float $keyCacheTimeLimit = 1;
 
     /**
      * Create path key
+     *
+     * @return array{0: string, 1: string}
      */
     protected function createNestedKey(
         string $namespace,

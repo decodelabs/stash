@@ -29,7 +29,7 @@ class Item implements CacheItem
     protected bool $isHit = false;
     protected bool $fetched = false;
 
-    protected ?Carbon $expiration;
+    protected ?Carbon $expiration = null;
     protected bool $locked = false;
 
     /**
@@ -248,7 +248,7 @@ class Item implements CacheItem
     /**
      * Set pile up policy to preempt
      *
-     * @param positive-int|null $time
+     * @phpstan-param positive-int|null $time
      * @return $this
      */
     public function pileUpPreempt(int $time = null): static
@@ -265,8 +265,8 @@ class Item implements CacheItem
     /**
      * Set pile up policy to sleep
      *
-     * @param positive-int|null $time
-     * @param positive-int|null $attempts
+     * @phpstan-param positive-int|null $time
+     * @phpstan-param positive-int|null $attempts
      * @return $this
      */
     public function pileUpSleep(
@@ -325,7 +325,7 @@ class Item implements CacheItem
     /**
      * Replace preempt time
      *
-     * @param positive-int $time
+     * @phpstan-param positive-int $time
      * @return $this
      */
     public function setPreemptTime(int $time): static
@@ -337,7 +337,7 @@ class Item implements CacheItem
     /**
      * Get preempt time
      *
-     * @return positive-int
+     * @phpstan-return positive-int
      */
     public function getPreemptTime(): int
     {
@@ -348,7 +348,7 @@ class Item implements CacheItem
     /**
      * Replace sleep time
      *
-     * @param positive-int $time
+     * @phpstan-param positive-int $time
      * @return $this
      */
     public function setSleepTime(int $time): static
@@ -360,7 +360,7 @@ class Item implements CacheItem
     /**
      * Get sleep time
      *
-     * @return positive-int
+     * @phpstan-return positive-int
      */
     public function getSleepTime(): int
     {
@@ -370,7 +370,7 @@ class Item implements CacheItem
     /**
      * Replace sleep attempts
      *
-     * @param positive-int $attempts
+     * @phpstan-param positive-int $attempts
      * @return $this
      */
     public function setSleepAttempts(int $attempts): static
@@ -382,7 +382,7 @@ class Item implements CacheItem
     /**
      * Get sleep attempts
      *
-     * @return positive-int
+     * @phpstan-return positive-int
      */
     public function getSleepAttempts(): int
     {

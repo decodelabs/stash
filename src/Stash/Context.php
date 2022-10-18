@@ -18,6 +18,10 @@ use Throwable;
 
 class Context
 {
+    public const DRIVERS = [
+        'Memcache', 'Redis', 'Apcu', 'Predis', 'PhpFile', 'PhpArray'
+    ];
+
     /**
      * @var array<string, Store>
      */
@@ -93,13 +97,13 @@ class Context
      */
     public function getDriverFor(string $namespace): Driver
     {
-        $options = [/*'Memcache', 'Redis', 'Apcu', 'Predis', 'PhpFile',*/ 'PhpArray'];
+        $drivers = self::DRIVERS;
 
         if (null !== ($driverName = $this->config?->getDriverFor($namespace))) {
-            array_unshift($options, $driverName);
+            array_unshift($drivers, $driverName);
         }
 
-        foreach ($options as $name) {
+        foreach ($drivers as $name) {
             try {
                 if ($driver = $this->loadDriver($name)) {
                     return $driver;
@@ -133,5 +137,37 @@ class Context
 
         $settings = $this->config?->getDriverSettings($name) ?? [];
         return new $class($settings);
+    }
+
+
+    /**
+     * Purge all drivers
+     */
+    public function purgeAll(): void
+    {
+        $drivers = self::DRIVERS + ($this->config?->getAllDrivers() ?? []);
+        $drivers = array_unique($drivers);
+
+        foreach ($drivers as $name) {
+            $this->purge($name);
+        }
+    }
+
+
+    /**
+     * Purge driver
+     */
+    public function purge(string $name): void
+    {
+        try {
+            if (!$driver = $this->loadDriver($name)) {
+                return;
+            }
+        } catch (Throwable $e) {
+            Glitch::logException($e);
+            return;
+        }
+
+        $driver->purge();
     }
 }

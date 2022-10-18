@@ -12,8 +12,12 @@ namespace DecodeLabs\Stash;
 interface Config
 {
     public function getDriverFor(string $namespace): ?string;
-
     public function isDriverEnabled(string $driver): bool;
+
+    /**
+     * @return array<string>
+     */
+    public function getAllDrivers(): array;
 
     /**
      * @return array<string, mixed>

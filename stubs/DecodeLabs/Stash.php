@@ -18,6 +18,7 @@ class Stash implements Proxy
 
     const VENEER = 'DecodeLabs\Stash';
     const VENEER_TARGET = Inst::class;
+    const DRIVERS = Inst::DRIVERS;
 
     public static Inst $instance;
 
@@ -34,4 +35,6 @@ class Stash implements Proxy
     public static function loadDriver(string $name): ?Ref2 {
         return static::$instance->loadDriver(...func_get_args());
     }
+    public static function purgeAll(): void {}
+    public static function purge(string $name): void {}
 };
