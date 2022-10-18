@@ -124,5 +124,34 @@ Then tell Stash about your configuration provider:
 Stash::setConfig(new MyConfig());
 ```
 
+## Custom Store methods
+
+By default, newly loaded caches use a generic Store implementation, however if you require custom methods for domain-oriented data access, you can implement your own Store classes using a custom [Archetype](https://github.com/decodelabs/archetype) `Resolver`.
+
+```php
+namespace MyApp;
+
+use DecodeLabs\Archetype;
+use DecodeLabs\Archetype\Resolver\Extension as ArchetypeExtension;
+use DecodeLabs\Stash\Store;
+use DecodeLabs\Stash\Store\Generic;
+
+class MyCache extends Generic
+{
+
+    public function getMyData(): string
+    {
+        return $this->fetch('myData', function() {
+            return 'Hello world';
+        });
+    }
+}
+
+Archetype::register(new ArchetypeExtension(
+    Store::class, namespace::class
+))
+```
+
+
 ## Licensing
 Stash is licensed under the MIT License. See [LICENSE](./LICENSE) for the full license text.
