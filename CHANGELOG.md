@@ -1,3 +1,5 @@
+* Fixed PHP8.1 testing
+
 ## v0.1.1 (2022-10-18)
 * Added Composer driver
 
