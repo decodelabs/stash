@@ -23,7 +23,7 @@ interface Store extends
     ArrayAccess
 {
     /**
-     * @phpstan-param non-empty-string $namespace
+     * @param non-empty-string $namespace
      */
     public function __construct(
         string $namespace,
@@ -81,13 +81,13 @@ interface Store extends
 
 
     /**
-     * @phpstan-param value-of<PileUpPolicy::KEYS> $policy
+     * @param value-of<PileUpPolicy::KEYS> $policy
      * @return $this
      */
     public function setPileUpPolicy(string $policy): static;
 
     /**
-     * @phpstan-return value-of<PileUpPolicy::KEYS>
+     * @return value-of<PileUpPolicy::KEYS>
      */
     public function getPileUpPolicy(): string;
 

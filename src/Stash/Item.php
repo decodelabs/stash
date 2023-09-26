@@ -33,7 +33,7 @@ class Item implements CacheItem
     protected bool $locked = false;
 
     /**
-     * @phpstan-var value-of<PileUpPolicy::KEYS>|null
+     * @var value-of<PileUpPolicy::KEYS>|null
      */
     protected ?string $pileUpPolicy = null;
 
@@ -302,7 +302,7 @@ class Item implements CacheItem
     /**
      * Set pile up policy
      *
-     * @phpstan-param value-of<PileUpPolicy::KEYS> $policy
+     * @param value-of<PileUpPolicy::KEYS> $policy
      * @return $this
      */
     public function setPileUpPolicy(string $policy): static
@@ -314,7 +314,7 @@ class Item implements CacheItem
     /**
      * Get pile up policy
      *
-     * @phpstan-return value-of<PileUpPolicy::KEYS>
+     * @return value-of<PileUpPolicy::KEYS>
      */
     public function getPileUpPolicy(): string
     {

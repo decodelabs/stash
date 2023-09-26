@@ -5,8 +5,8 @@
  */
 namespace DecodeLabs;
 
-use DecodeLabs\Veneer\Proxy;
-use DecodeLabs\Veneer\ProxyTrait;
+use DecodeLabs\Veneer\Proxy as Proxy;
+use DecodeLabs\Veneer\ProxyTrait as ProxyTrait;
 use DecodeLabs\Stash\Context as Inst;
 use DecodeLabs\Stash\Config as Ref0;
 use DecodeLabs\Stash\Store as Ref1;
@@ -16,7 +16,7 @@ class Stash implements Proxy
 {
     use ProxyTrait;
 
-    const VENEER = 'DecodeLabs\Stash';
+    const VENEER = 'DecodeLabs\\Stash';
     const VENEER_TARGET = Inst::class;
     const DRIVERS = Inst::DRIVERS;
 

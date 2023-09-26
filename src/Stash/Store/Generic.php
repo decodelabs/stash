@@ -32,7 +32,7 @@ class Generic implements Store
     protected array $deferred = [];
 
     /**
-     * @phpstan-var value-of<PileUpPolicy::KEYS>
+     * @var value-of<PileUpPolicy::KEYS>
      */
     protected string $pileUpPolicy = PileUpPolicy::PREEMPT;
 
@@ -168,6 +168,7 @@ class Generic implements Store
         string $key,
         string ...$keys
     ): bool {
+        /** @var array<string> */
         $keys = func_get_args();
 
         return $this->wrapSimpleErrors(function () use ($keys) {
@@ -218,6 +219,7 @@ class Generic implements Store
         string $key,
         string ...$keys
     ): bool {
+        /** @var array<string> */
         $keys = func_get_args();
 
         return $this->wrapSimpleErrors(function () use ($keys) {
@@ -233,20 +235,24 @@ class Generic implements Store
         string $key,
         string ...$keys
     ): bool {
-        return $this->deleteItems(func_get_args());
+        /** @var array<string> */
+        $keys = func_get_args();
+
+        return $this->deleteItems($keys);
     }
 
     /**
      * Deletes multiple cache items in a single operation.
      *
-     * @param iterable<string> $keys
+     * @param iterable<int, string> $keys
      */
     public function deleteMultiple(iterable $keys): bool
     {
-        $keys = func_get_args();
+        /** @var array<string> */
+        $keys = Coercion::iterableToArray($keys);
 
         return $this->wrapSimpleErrors(function () use ($keys) {
-            return $this->deleteItems(Coercion::iterableToArray($keys));
+            return $this->deleteItems($keys);
         });
     }
 
@@ -445,6 +451,8 @@ class Generic implements Store
 
     /**
      * Shortcut delete()
+     *
+     * @param string $key
      */
     public function offsetUnset(mixed $key): void
     {
@@ -628,8 +636,8 @@ class Generic implements Store
      * Wrap simple errors
      *
      * @template T
-     * @phpstan-param Closure(): T $func
-     * @phpstan-return T
+     * @param Closure(): T $func
+     * @return T
      */
     protected function wrapSimpleErrors(Closure $func): mixed
     {
