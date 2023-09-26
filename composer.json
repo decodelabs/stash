@@ -2,12 +2,12 @@
     "name": "decodelabs/stash",
     "description": "PSR6 / PSR16 cache handler",
     "type": "library",
-    "keywords": ["cache"],
+    "keywords": [ "cache" ],
     "license": "MIT",
-    "authors": [{
-        "name": "Tom Wright",
-        "email": "tom@inflatablecookie.com"
-    }],
+    "authors": [ {
+            "name": "Tom Wright",
+            "email": "tom@inflatablecookie.com"
+        } ],
     "require": {
         "php": "^8.0",
 
@@ -27,7 +27,7 @@
 
         "ext-memcached": "^3.2",
         "ext-apcu": "^5.1",
-        "ext-redis": "^5.3",
+        "ext-redis": "^5.3|^6",
         "predis/predis": "^2.0"
     },
     "provide": {
