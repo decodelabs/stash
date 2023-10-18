@@ -1,3 +1,5 @@
+* Updated Genesis dependency
+
 ## v0.1.2 (2023-09-26)
 * Converted phpstan doc comments to generic
 * Migrated to use effigy in CI workflow
