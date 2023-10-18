@@ -13,7 +13,9 @@ use DecodeLabs\Archetype;
 use DecodeLabs\Archetype\NotFoundException as ArchetypeException;
 use DecodeLabs\Exceptional;
 use DecodeLabs\Glitch\Proxy as Glitch;
+use DecodeLabs\Stash;
 use DecodeLabs\Stash\Store\Generic as GenericStore;
+use DecodeLabs\Veneer;
 use Throwable;
 
 class Context
@@ -171,3 +173,7 @@ class Context
         $driver->purge();
     }
 }
+
+
+// Veneer
+Veneer::register(Context::class, Stash::class);

@@ -1,3 +1,4 @@
+* Refactored package file structure
 * Updated Genesis dependency
 
 ## v0.1.2 (2023-09-26)

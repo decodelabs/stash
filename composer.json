@@ -36,10 +36,10 @@
     },
     "autoload": {
         "psr-4": {
-            "DecodeLabs\\Stash\\": "src/Stash/"
+            "DecodeLabs\\Stash\\": "src/"
         },
         "files": [
-            "src/global.php"
+            "src/Context.php"
         ]
     },
     "extra": {
