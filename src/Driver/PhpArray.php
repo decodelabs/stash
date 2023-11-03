@@ -39,8 +39,9 @@ class PhpArray implements Driver
     /**
      * Init with settings
      */
-    public function __construct(array $settings)
-    {
+    public function __construct(
+        array $settings
+    ) {
         $this->generatePrefix(
             Coercion::toStringOrNull($settings['prefix'] ?? null)
         );
@@ -95,8 +96,9 @@ class PhpArray implements Driver
     /**
      * Clear all values from store
      */
-    public function clearAll(string $namespace): bool
-    {
+    public function clearAll(
+        string $namespace
+    ): bool {
         $regex = $this->createRegexKey($namespace, null);
 
         foreach ($this->values as $key => $value) {

@@ -40,8 +40,9 @@ class File implements Driver
     /**
      * Init with settings
      */
-    public function __construct(array $settings)
-    {
+    public function __construct(
+        array $settings
+    ) {
         $this->generatePrefix(
             Coercion::toStringOrNull($settings['prefix'] ?? null)
         );
@@ -76,8 +77,9 @@ class File implements Driver
      *
      * @return $this
      */
-    public function setDirPermissions(int $perms): static
-    {
+    public function setDirPermissions(
+        int $perms
+    ): static {
         $this->dirPerms = $perms;
         return $this;
     }
@@ -95,8 +97,9 @@ class File implements Driver
      *
      * @return $this
      */
-    public function setFilePermissions(int $perms): static
-    {
+    public function setFilePermissions(
+        int $perms
+    ): static {
         $this->filePerms = $perms;
         return $this;
     }
@@ -195,8 +198,9 @@ class File implements Driver
      *
      * @return array{'namespace': string, 'key': string, 'expires': ?int, 'value': mixed}|null
      */
-    protected function loadFileContent(FileInterface $file): ?array
-    {
+    protected function loadFileContent(
+        FileInterface $file
+    ): ?array {
         try {
             $data = unserialize($file->getContents());
         } catch (Throwable $e) {
@@ -238,8 +242,9 @@ class File implements Driver
     /**
      * Clear all values from store
      */
-    public function clearAll(string $namespace): bool
-    {
+    public function clearAll(
+        string $namespace
+    ): bool {
         $key = $this->inspectKey($namespace, null);
         $root = $this->hashKey($key['key']);
         $this->dir->deleteDir($root);
@@ -330,8 +335,9 @@ class File implements Driver
     /**
      * Hash key parts
      */
-    protected function hashKey(string $key): string
-    {
+    protected function hashKey(
+        string $key
+    ): string {
         $key = trim($key, '/');
         $parts = explode(static::KEY_SEPARATOR, $key);
 

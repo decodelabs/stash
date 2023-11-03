@@ -87,8 +87,9 @@ class Item implements CacheItem
      *
      * @return $this
      */
-    public function set(mixed $value): static
-    {
+    public function set(
+        mixed $value
+    ): static {
         $this->value = $value;
         $this->isHit = true;
         $this->fetched = true;
@@ -251,8 +252,9 @@ class Item implements CacheItem
      * @phpstan-param positive-int|null $time
      * @return $this
      */
-    public function pileUpPreempt(int $time = null): static
-    {
+    public function pileUpPreempt(
+        int $time = null
+    ): static {
         $this->pileUpPolicy = PileUpPolicy::PREEMPT;
 
         if ($time !== null) {
@@ -291,8 +293,9 @@ class Item implements CacheItem
      *
      * @return $this
      */
-    public function pileUpValue(mixed $value): static
-    {
+    public function pileUpValue(
+        mixed $value
+    ): static {
         $this->pileUpPolicy = PileUpPolicy::VALUE;
         $this->fallbackValue = $value;
         return $this;
@@ -305,8 +308,9 @@ class Item implements CacheItem
      * @param value-of<PileUpPolicy::KEYS> $policy
      * @return $this
      */
-    public function setPileUpPolicy(string $policy): static
-    {
+    public function setPileUpPolicy(
+        string $policy
+    ): static {
         $this->pileUpPolicy = $policy;
         return $this;
     }
@@ -328,8 +332,9 @@ class Item implements CacheItem
      * @phpstan-param positive-int $time
      * @return $this
      */
-    public function setPreemptTime(int $time): static
-    {
+    public function setPreemptTime(
+        int $time
+    ): static {
         $this->preemptTime = $time;
         return $this;
     }
@@ -351,8 +356,9 @@ class Item implements CacheItem
      * @phpstan-param positive-int $time
      * @return $this
      */
-    public function setSleepTime(int $time): static
-    {
+    public function setSleepTime(
+        int $time
+    ): static {
         $this->sleepTime = $time;
         return $this;
     }
@@ -373,8 +379,9 @@ class Item implements CacheItem
      * @phpstan-param positive-int $attempts
      * @return $this
      */
-    public function setSleepAttempts(int $attempts): static
-    {
+    public function setSleepAttempts(
+        int $attempts
+    ): static {
         $this->sleepAttempts = $attempts;
         return $this;
     }
@@ -395,8 +402,9 @@ class Item implements CacheItem
      *
      * @return $this
      */
-    public function setFallbackValue(mixed $value): static
-    {
+    public function setFallbackValue(
+        mixed $value
+    ): static {
         $this->fallbackValue = $value;
         return $this;
     }

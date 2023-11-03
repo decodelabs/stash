@@ -66,8 +66,9 @@ class BlackHole implements Driver
     /**
      * Clear all values from store
      */
-    public function clearAll(string $namespace): bool
-    {
+    public function clearAll(
+        string $namespace
+    ): bool {
         return true;
     }
 

@@ -31,8 +31,9 @@ class Memcache implements Driver
     /**
      * Init with settings
      */
-    public function __construct(array $settings)
-    {
+    public function __construct(
+        array $settings
+    ) {
         $this->generatePrefix(
             Coercion::toStringOrNull($settings['prefix'] ?? null)
         );
@@ -111,8 +112,9 @@ class Memcache implements Driver
     /**
      * Clear all values from store
      */
-    public function clearAll(string $namespace): bool
-    {
+    public function clearAll(
+        string $namespace
+    ): bool {
         $key = $this->createNestedKey($namespace, null)[1];
 
         if (!$this->client->increment($key)) {
@@ -170,8 +172,9 @@ class Memcache implements Driver
     /**
      * Get cached path index
      */
-    protected function getPathIndex(string $pathKey): int
-    {
+    protected function getPathIndex(
+        string $pathKey
+    ): int {
         return Coercion::toIntOrNull($this->client->get($pathKey)) ?? 0;
     }
 

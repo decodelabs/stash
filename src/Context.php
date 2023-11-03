@@ -35,8 +35,9 @@ class Context
     /**
      * Set config
      */
-    public function setConfig(?Config $config): void
-    {
+    public function setConfig(
+        ?Config $config
+    ): void {
         $this->config = $config;
     }
 
@@ -53,8 +54,9 @@ class Context
     /**
      * Get cache store by name
      */
-    public function get(string $namespace): Store
-    {
+    public function get(
+        string $namespace
+    ): Store {
         if (isset($this->caches[$namespace])) {
             return $this->caches[$namespace];
         }
@@ -97,8 +99,9 @@ class Context
     /**
      * Get driver for namespace
      */
-    public function getDriverFor(string $namespace): Driver
-    {
+    public function getDriverFor(
+        string $namespace
+    ): Driver {
         $drivers = self::DRIVERS;
 
         if (null !== ($driverName = $this->config?->getDriverFor($namespace))) {
@@ -126,8 +129,9 @@ class Context
     /**
      * Load driver by name
      */
-    public function loadDriver(string $name): ?Driver
-    {
+    public function loadDriver(
+        string $name
+    ): ?Driver {
         $class = Archetype::resolve(Driver::class, $name);
 
         if (
@@ -159,8 +163,9 @@ class Context
     /**
      * Purge driver
      */
-    public function purge(string $name): void
-    {
+    public function purge(
+        string $name
+    ): void {
         try {
             if (!$driver = $this->loadDriver($name)) {
                 return;

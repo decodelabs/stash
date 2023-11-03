@@ -18,8 +18,9 @@ trait KeyGenTrait
     /**
      * Create a unique prefix
      */
-    protected function generatePrefix(?string $prefix = null): void
-    {
+    protected function generatePrefix(
+        ?string $prefix = null
+    ): void {
         $this->prefix = $prefix ?? base64_encode(pack('H*', md5(__FILE__)));
     }
 
@@ -130,8 +131,10 @@ trait KeyGenTrait
     /**
      * Create an internal lock key
      */
-    protected function createLockKey(string $namespace, string $key): string
-    {
+    protected function createLockKey(
+        string $namespace,
+        string $key
+    ): string {
         $separator = $this->getKeySeparator();
         $key = str_replace('.', $separator, $key);
         $output = $this->prefix . '!lock' . $separator . md5($namespace . $separator . $key);

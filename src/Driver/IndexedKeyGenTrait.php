@@ -66,5 +66,7 @@ trait IndexedKeyGenTrait
         ];
     }
 
-    abstract protected function getPathIndex(string $pathKey): int;
+    abstract protected function getPathIndex(
+        string $pathKey
+    ): int;
 }
