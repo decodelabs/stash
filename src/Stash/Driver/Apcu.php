@@ -32,8 +32,9 @@ class Apcu implements Driver
     /**
      * Init with settings
      */
-    public function __construct(array $settings)
-    {
+    public function __construct(
+        array $settings
+    ) {
         $this->generatePrefix(
             Coercion::toStringOrNull($settings['prefix'] ?? null)
         );
@@ -109,8 +110,9 @@ class Apcu implements Driver
     /**
      * Clear all values from store
      */
-    public function clearAll(string $namespace): bool
-    {
+    public function clearAll(
+        string $namespace
+    ): bool {
         do {
             $empty = true;
 
@@ -174,6 +176,83 @@ class Apcu implements Driver
     ): bool {
         $key = $this->createLockKey($namespace, $key);
         return (bool)apcu_delete($key);
+    }
+
+
+    /**
+     * Count items
+     */
+    public function count(
+        string $namespace
+    ): int {
+        $output = 0;
+        $prefix = $this->prefix . $this->getKeySeparator() . $namespace . $this->getKeySeparator();
+
+        foreach ($this->getCacheList() as $set) {
+            if (str_starts_with($set['info'], $prefix)) {
+                $output++;
+            }
+        }
+
+        return $output;
+    }
+
+
+    /**
+     * Get list of keys
+     */
+    public function getKeys(
+        string $namespace
+    ): array {
+        $output = [];
+        $prefix = $this->prefix . $this->getKeySeparator() . $namespace . $this->getKeySeparator();
+
+        foreach ($this->getCacheList() as $set) {
+            if (str_starts_with($set['info'], $prefix)) {
+                $output[] = $set['info'];
+            }
+        }
+
+        return $output;
+    }
+
+
+    /**
+     * Get normalized APCU cache info
+     *
+     * @return array<int, array<string, mixed>>
+     * @phpstan-return array<int, array{
+     *      info: string
+     * }>
+     */
+    public static function getCacheList(): array
+    {
+        $info = apcu_cache_info();
+        $output = [];
+
+        if (isset($info['cache_list'])) {
+            /**
+             * @var array<int, array<string, mixed>> $output
+             * @phpstan-var array<int, array{
+             *     info: string,
+             *     key: string
+             * }> $output
+             */
+            $output = $info['cache_list'];
+
+            if (isset($output[0]['key'])) {
+                foreach ($output as $i => $set) {
+                    $key = $set['key'];
+                    unset($set['key']);
+
+                    $output[$i] = array_merge([
+                        'info' => $key
+                    ], $set);
+                }
+            }
+        }
+
+        return $output;
     }
 
 

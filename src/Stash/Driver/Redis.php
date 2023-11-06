@@ -32,8 +32,9 @@ class Redis implements Driver
     /**
      * Init with settings
      */
-    public function __construct(array $settings)
-    {
+    public function __construct(
+        array $settings
+    ) {
         $this->generatePrefix(
             Coercion::toStringOrNull($settings['prefix'] ?? null)
         );
@@ -137,8 +138,9 @@ class Redis implements Driver
     /**
      * Clear all values from store
      */
-    public function clearAll(string $namespace): bool
-    {
+    public function clearAll(
+        string $namespace
+    ): bool {
         $key = $this->createNestedKey($namespace, null)[1];
 
         if (!$this->client->incr($key)) {
@@ -187,12 +189,30 @@ class Redis implements Driver
     }
 
 
+    /**
+     * Count items
+     */
+    public function count(
+        string $namespace,
+    ): int {
+        return count($this->getKeys($namespace));
+    }
+
+    /**
+     * Get key
+     */
+    public function getKeys(string $namespace): array
+    {
+        return $this->client->keys($this->prefix . ':*');
+    }
+
 
     /**
      * Get cached path index
      */
-    protected function getPathIndex(string $pathKey): int
-    {
+    protected function getPathIndex(
+        string $pathKey
+    ): int {
         return (int)$this->client->get($pathKey);
     }
 

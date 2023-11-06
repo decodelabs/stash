@@ -11,8 +11,14 @@ namespace DecodeLabs\Stash;
 
 interface Config
 {
-    public function getDriverFor(string $namespace): ?string;
-    public function isDriverEnabled(string $driver): bool;
+    public function getDriverFor(
+        string $namespace
+    ): ?string;
+
+    public function isDriverEnabled(
+        string $driver
+    ): bool;
+
 
     /**
      * @return array<string>
@@ -22,25 +28,32 @@ interface Config
     /**
      * @return array<string, mixed>
      */
-    public function getDriverSettings(string $driver): ?array;
+    public function getDriverSettings(
+        string $driver
+    ): ?array;
 
-    /**
-     * @return value-of<PileUpPolicy::KEYS>|null
-     */
-    public function getPileUpPolicy(string $namespace): ?string;
-
-    /**
-     * @return positive-int|null
-     */
-    public function getPreemptTime(string $namespace): ?int;
+    public function getPileUpPolicy(
+        string $namespace
+    ): ?PileUpPolicy;
 
     /**
      * @return positive-int|null
      */
-    public function getSleepTime(string $namespace): ?int;
+    public function getPreemptTime(
+        string $namespace
+    ): ?int;
 
     /**
      * @return positive-int|null
      */
-    public function getSleepAttempts(string $namespace): ?int;
+    public function getSleepTime(
+        string $namespace
+    ): ?int;
+
+    /**
+     * @return positive-int|null
+     */
+    public function getSleepAttempts(
+        string $namespace
+    ): ?int;
 }

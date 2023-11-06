@@ -30,8 +30,9 @@ class Composite implements Driver
     /**
      * Init with drivers
      */
-    public function __construct(array $settings)
-    {
+    public function __construct(
+        array $settings
+    ) {
         foreach ($settings as $name => $driverSettings) {
             $class = Archetype::resolve(Driver::class, $name);
 
@@ -99,8 +100,9 @@ class Composite implements Driver
     /**
      * Clear all values from store
      */
-    public function clearAll(string $namespace): bool
-    {
+    public function clearAll(
+        string $namespace
+    ): bool {
         $output = true;
 
         foreach (array_reverse($this->drivers) as $driver) {
@@ -161,6 +163,31 @@ class Composite implements Driver
         }
 
         return $output;
+    }
+
+
+    /**
+     * Count items
+     */
+    public function count(
+        string $namespace
+    ): int {
+        return count($this->getKeys($namespace));
+    }
+
+    /**
+     * Get all keys
+     */
+    public function getKeys(
+        string $namespace
+    ): array {
+        $output = [];
+
+        foreach ($this->drivers as $driver) {
+            $output = array_merge($output, $driver->getKeys($namespace));
+        }
+
+        return array_unique($output);
     }
 
 

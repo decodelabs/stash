@@ -32,10 +32,7 @@ class Item implements CacheItem
     protected ?Carbon $expiration = null;
     protected bool $locked = false;
 
-    /**
-     * @var value-of<PileUpPolicy::KEYS>|null
-     */
-    protected ?string $pileUpPolicy = null;
+    protected ?PileUpPolicy $pileUpPolicy = null;
 
     /**
      * @phpstan-var positive-int|null
@@ -87,8 +84,9 @@ class Item implements CacheItem
      *
      * @return $this
      */
-    public function set(mixed $value): static
-    {
+    public function set(
+        mixed $value
+    ): static {
         $this->value = $value;
         $this->isHit = true;
         $this->fetched = true;
@@ -251,8 +249,9 @@ class Item implements CacheItem
      * @phpstan-param positive-int|null $time
      * @return $this
      */
-    public function pileUpPreempt(int $time = null): static
-    {
+    public function pileUpPreempt(
+        int $time = null
+    ): static {
         $this->pileUpPolicy = PileUpPolicy::PREEMPT;
 
         if ($time !== null) {
@@ -291,8 +290,9 @@ class Item implements CacheItem
      *
      * @return $this
      */
-    public function pileUpValue(mixed $value): static
-    {
+    public function pileUpValue(
+        mixed $value
+    ): static {
         $this->pileUpPolicy = PileUpPolicy::VALUE;
         $this->fallbackValue = $value;
         return $this;
@@ -302,21 +302,19 @@ class Item implements CacheItem
     /**
      * Set pile up policy
      *
-     * @param value-of<PileUpPolicy::KEYS> $policy
      * @return $this
      */
-    public function setPileUpPolicy(string $policy): static
-    {
+    public function setPileUpPolicy(
+        PileUpPolicy $policy
+    ): static {
         $this->pileUpPolicy = $policy;
         return $this;
     }
 
     /**
      * Get pile up policy
-     *
-     * @return value-of<PileUpPolicy::KEYS>
      */
-    public function getPileUpPolicy(): string
+    public function getPileUpPolicy(): PileUpPolicy
     {
         return $this->pileUpPolicy ?? $this->store->getPileUpPolicy();
     }
@@ -328,8 +326,9 @@ class Item implements CacheItem
      * @phpstan-param positive-int $time
      * @return $this
      */
-    public function setPreemptTime(int $time): static
-    {
+    public function setPreemptTime(
+        int $time
+    ): static {
         $this->preemptTime = $time;
         return $this;
     }
@@ -351,8 +350,9 @@ class Item implements CacheItem
      * @phpstan-param positive-int $time
      * @return $this
      */
-    public function setSleepTime(int $time): static
-    {
+    public function setSleepTime(
+        int $time
+    ): static {
         $this->sleepTime = $time;
         return $this;
     }
@@ -373,8 +373,9 @@ class Item implements CacheItem
      * @phpstan-param positive-int $attempts
      * @return $this
      */
-    public function setSleepAttempts(int $attempts): static
-    {
+    public function setSleepAttempts(
+        int $attempts
+    ): static {
         $this->sleepAttempts = $attempts;
         return $this;
     }
@@ -395,8 +396,9 @@ class Item implements CacheItem
      *
      * @return $this
      */
-    public function setFallbackValue(mixed $value): static
-    {
+    public function setFallbackValue(
+        mixed $value
+    ): static {
         $this->fallbackValue = $value;
         return $this;
     }
@@ -619,7 +621,11 @@ class Item implements CacheItem
             return;
         }
 
-        $options = array_unique([$policy, PileUpPolicy::VALUE, PileUpPolicy::SLEEP]);
+        if ($policy === PileUpPolicy::SLEEP) {
+            $options = [$policy, PileUpPolicy::VALUE];
+        } else {
+            $options = [$policy, PileUpPolicy::SLEEP];
+        }
 
         foreach ($options as $option) {
             switch ($option) {

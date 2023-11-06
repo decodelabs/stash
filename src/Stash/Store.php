@@ -11,6 +11,7 @@ namespace DecodeLabs\Stash;
 
 use ArrayAccess;
 use Closure;
+use Countable;
 use Psr\Cache\CacheItemPoolInterface as CacheItemPool;
 use Psr\SimpleCache\CacheInterface as SimpleCache;
 
@@ -20,7 +21,8 @@ use Psr\SimpleCache\CacheInterface as SimpleCache;
 interface Store extends
     CacheItemPool,
     SimpleCache,
-    ArrayAccess
+    ArrayAccess,
+    Countable
 {
     /**
      * @param non-empty-string $namespace
@@ -46,9 +48,25 @@ interface Store extends
         mixed $value
     ): void;
 
-    public function __get(string $key): Item;
-    public function __isset(string $key): bool;
-    public function __unset(string $key): void;
+    public function __get(
+        string $key
+    ): Item;
+
+    public function __isset(
+        string $key
+    ): bool;
+
+    public function __unset(
+        string $key
+    ): void;
+
+
+
+    /**
+     * @return array<string>
+     */
+    public function getDriverKeys(): array;
+
 
     public function clearDeferred(): bool;
 
@@ -62,7 +80,9 @@ interface Store extends
      * @phpstan-param positive-int|null $time
      * @return $this
      */
-    public function pileUpPreempt(int $time = null): static;
+    public function pileUpPreempt(
+        int $time = null
+    ): static;
 
     /**
      * @phpstan-param positive-int|null $time
@@ -80,22 +100,19 @@ interface Store extends
     public function pileUpValue(): static;
 
 
-    /**
-     * @param value-of<PileUpPolicy::KEYS> $policy
-     * @return $this
-     */
-    public function setPileUpPolicy(string $policy): static;
+    public function setPileUpPolicy(
+        PileUpPolicy $policy
+    ): static;
 
-    /**
-     * @return value-of<PileUpPolicy::KEYS>
-     */
-    public function getPileUpPolicy(): string;
+    public function getPileUpPolicy(): PileUpPolicy;
 
     /**
      * @phpstan-param positive-int $time
      * @return $this
      */
-    public function setPreemptTime(int $time): static;
+    public function setPreemptTime(
+        int $time
+    ): static;
 
     /**
      * @phpstan-return positive-int
@@ -106,7 +123,9 @@ interface Store extends
      * @phpstan-param positive-int $time
      * @return $this
      */
-    public function setSleepTime(int $time): static;
+    public function setSleepTime(
+        int $time
+    ): static;
 
     /**
      * @phpstan-return positive-int
@@ -117,7 +136,9 @@ interface Store extends
      * @phpstan-param positive-int $attempts
      * @return $this
      */
-    public function setSleepAttempts(int $attempts): static;
+    public function setSleepAttempts(
+        int $attempts
+    ): static;
 
     /**
      * @phpstan-return positive-int

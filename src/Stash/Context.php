@@ -11,9 +11,13 @@ namespace DecodeLabs\Stash;
 
 use DecodeLabs\Archetype;
 use DecodeLabs\Archetype\NotFoundException as ArchetypeException;
+use DecodeLabs\Dovetail;
+use DecodeLabs\Dovetail\Config\Stash as StashConfig;
 use DecodeLabs\Exceptional;
 use DecodeLabs\Glitch\Proxy as Glitch;
+use DecodeLabs\Stash;
 use DecodeLabs\Stash\Store\Generic as GenericStore;
+use DecodeLabs\Veneer;
 use Throwable;
 
 class Context
@@ -28,13 +32,15 @@ class Context
     protected array $caches = [];
 
     protected ?Config $config = null;
+    protected ?string $defaultPrefix = null;
 
 
     /**
      * Set config
      */
-    public function setConfig(?Config $config): void
-    {
+    public function setConfig(
+        ?Config $config
+    ): void {
         $this->config = $config;
     }
 
@@ -43,7 +49,35 @@ class Context
      */
     public function getConfig(): ?Config
     {
+        if (
+            $this->config === null &&
+            class_exists(Dovetail::class)
+        ) {
+            $this->config = StashConfig::load();
+        }
+
         return $this->config;
+    }
+
+
+    /**
+     * Set default prefix for all stores
+     *
+     * @return $this
+     */
+    public function setDefaultPrefix(
+        ?string $prefix
+    ): static {
+        $this->defaultPrefix = $prefix;
+        return $this;
+    }
+
+    /**
+     * Get default prefix
+     */
+    public function getDefaultPrefix(): ?string
+    {
+        return $this->defaultPrefix;
     }
 
 
@@ -51,13 +85,14 @@ class Context
     /**
      * Get cache store by name
      */
-    public function get(string $namespace): Store
-    {
+    public function load(
+        string $namespace
+    ): Store {
         if (isset($this->caches[$namespace])) {
             return $this->caches[$namespace];
         }
 
-        $driver = $this->getDriverFor($namespace);
+        $driver = $this->loadDriverFor($namespace);
 
         try {
             $class = Archetype::resolve(Store::class, $namespace);
@@ -67,24 +102,24 @@ class Context
 
         $store = new $class($namespace, $driver);
 
-        if ($this->config) {
+        if ($config = $this->getConfig()) {
             // Pile up policy
-            if (null !== ($policy = $this->config->getPileUpPolicy($namespace))) {
+            if (null !== ($policy = $config->getPileUpPolicy($namespace))) {
                 $store->setPileUpPolicy($policy);
             }
 
             // Preempt time
-            if (null !== ($time = $this->config->getPreemptTime($namespace))) {
+            if (null !== ($time = $config->getPreemptTime($namespace))) {
                 $store->setPreemptTime($time);
             }
 
             // Sleep time
-            if (null !== ($time = $this->config->getSleepTime($namespace))) {
+            if (null !== ($time = $config->getSleepTime($namespace))) {
                 $store->setSleepTime($time);
             }
 
             // Sleep attempts
-            if (null !== ($attempts = $this->config->getSleepAttempts($namespace))) {
+            if (null !== ($attempts = $config->getSleepAttempts($namespace))) {
                 $store->setSleepAttempts($attempts);
             }
         }
@@ -95,11 +130,12 @@ class Context
     /**
      * Get driver for namespace
      */
-    public function getDriverFor(string $namespace): Driver
-    {
+    public function loadDriverFor(
+        string $namespace
+    ): Driver {
         $drivers = self::DRIVERS;
 
-        if (null !== ($driverName = $this->config?->getDriverFor($namespace))) {
+        if (null !== ($driverName = $this->getConfig()?->getDriverFor($namespace))) {
             array_unshift($drivers, $driverName);
         }
 
@@ -124,18 +160,28 @@ class Context
     /**
      * Load driver by name
      */
-    public function loadDriver(string $name): ?Driver
-    {
+    public function loadDriver(
+        string $name
+    ): ?Driver {
         $class = Archetype::resolve(Driver::class, $name);
+        $config = $this->getConfig();
 
         if (
             !$class::isAvailable() ||
-            !($this->config?->isDriverEnabled($name) ?? true)
+            !($config?->isDriverEnabled($name) ?? true)
         ) {
             return null;
         }
 
-        $settings = $this->config?->getDriverSettings($name) ?? [];
+        $settings = $config?->getDriverSettings($name) ?? [];
+
+        if (
+            !isset($settings['prefix']) &&
+            $this->defaultPrefix !== null
+        ) {
+            $settings['prefix'] = $this->defaultPrefix;
+        }
+
         return new $class($settings);
     }
 
@@ -145,7 +191,7 @@ class Context
      */
     public function purgeAll(): void
     {
-        $drivers = self::DRIVERS + ($this->config?->getAllDrivers() ?? []);
+        $drivers = self::DRIVERS + ($this->getConfig()?->getAllDrivers() ?? []);
         $drivers = array_unique($drivers);
 
         foreach ($drivers as $name) {
@@ -157,8 +203,9 @@ class Context
     /**
      * Purge driver
      */
-    public function purge(string $name): void
-    {
+    public function purge(
+        string $name
+    ): void {
         try {
             if (!$driver = $this->loadDriver($name)) {
                 return;
@@ -171,3 +218,7 @@ class Context
         $driver->purge();
     }
 }
+
+
+// Veneer
+Veneer::register(Context::class, Stash::class);

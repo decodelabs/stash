@@ -42,8 +42,9 @@ class PhpFile extends File
     /**
      * Get item data from file
      */
-    protected function loadFileContent(FileInterface $file): ?array
-    {
+    protected function loadFileContent(
+        FileInterface $file
+    ): ?array {
         try {
             $data = require (string)$file;
         } catch (Throwable $e) {

@@ -66,8 +66,9 @@ class BlackHole implements Driver
     /**
      * Clear all values from store
      */
-    public function clearAll(string $namespace): bool
-    {
+    public function clearAll(
+        string $namespace
+    ): bool {
         return true;
     }
 
@@ -102,6 +103,25 @@ class BlackHole implements Driver
         string $key
     ): bool {
         return true;
+    }
+
+
+    /**
+     * Count items
+     */
+    public function count(
+        string $namespace
+    ): int {
+        return 0;
+    }
+
+    /**
+     * Get keys
+     */
+    public function getKeys(
+        string $namespace
+    ): array {
+        return [];
     }
 
 

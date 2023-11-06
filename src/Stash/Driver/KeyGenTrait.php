@@ -18,15 +18,17 @@ trait KeyGenTrait
     /**
      * Create a unique prefix
      */
-    protected function generatePrefix(?string $prefix = null): void
-    {
+    protected function generatePrefix(
+        ?string $prefix = null
+    ): void {
         $this->prefix = $prefix ?? base64_encode(pack('H*', md5(__FILE__)));
     }
 
     /**
      * Generate list of keys to delete
      *
-     * @return array{'normal': ?string, 'children': bool, 'self': bool}
+     * @return array<string, mixed>
+     * @phpstan-return array{'normal': ?string, 'children': bool, 'self': bool}
      */
     protected function parseKey(
         string $namespace,
@@ -130,8 +132,10 @@ trait KeyGenTrait
     /**
      * Create an internal lock key
      */
-    protected function createLockKey(string $namespace, string $key): string
-    {
+    protected function createLockKey(
+        string $namespace,
+        string $key
+    ): string {
         $separator = $this->getKeySeparator();
         $key = str_replace('.', $separator, $key);
         $output = $this->prefix . '!lock' . $separator . md5($namespace . $separator . $key);

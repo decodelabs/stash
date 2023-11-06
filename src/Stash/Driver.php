@@ -16,7 +16,9 @@ interface Driver
     /**
      * @param array<string, mixed> $settings
      */
-    public function __construct(array $settings);
+    public function __construct(
+        array $settings
+    );
 
     public function store(
         string $namespace,
@@ -39,7 +41,9 @@ interface Driver
         string $key
     ): bool;
 
-    public function clearAll(string $namespace): bool;
+    public function clearAll(
+        string $namespace
+    ): bool;
 
 
     public function storeLock(
@@ -57,6 +61,18 @@ interface Driver
         string $namespace,
         string $key
     ): bool;
+
+
+    public function count(
+        string $namespace
+    ): int;
+
+    /**
+     * @return array<string>
+     */
+    public function getKeys(
+        string $namespace
+    ): array;
 
     public function purge(): void;
 }

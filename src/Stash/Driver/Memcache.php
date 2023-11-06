@@ -31,8 +31,9 @@ class Memcache implements Driver
     /**
      * Init with settings
      */
-    public function __construct(array $settings)
-    {
+    public function __construct(
+        array $settings
+    ) {
         $this->generatePrefix(
             Coercion::toStringOrNull($settings['prefix'] ?? null)
         );
@@ -111,8 +112,9 @@ class Memcache implements Driver
     /**
      * Clear all values from store
      */
-    public function clearAll(string $namespace): bool
-    {
+    public function clearAll(
+        string $namespace
+    ): bool {
         $key = $this->createNestedKey($namespace, null)[1];
 
         if (!$this->client->increment($key)) {
@@ -166,12 +168,57 @@ class Memcache implements Driver
     }
 
 
+    /**
+     * Count items
+     */
+    public function count(
+        string $namespace,
+    ): int {
+        $output = 0;
+        $keys = $this->client->getAllKeys();
+
+        if (!is_iterable($keys)) {
+            return 0;
+        }
+
+        foreach ($keys as $key) {
+            if (str_starts_with($key, $this->prefix)) {
+                $output++;
+            }
+        }
+
+        return $output;
+    }
+
+    /**
+     * Get key
+     */
+    public function getKeys(string $namespace): array
+    {
+        $output = [];
+        $length = strlen((string)$this->prefix);
+        $keys = $this->client->getAllKeys();
+
+        if (!is_iterable($keys)) {
+            return [];
+        }
+
+        foreach ($keys as $key) {
+            if (str_starts_with($key, $this->prefix)) {
+                $output[] = $key;
+            }
+        }
+
+        return $output;
+    }
+
 
     /**
      * Get cached path index
      */
-    protected function getPathIndex(string $pathKey): int
-    {
+    protected function getPathIndex(
+        string $pathKey
+    ): int {
         return Coercion::toIntOrNull($this->client->get($pathKey)) ?? 0;
     }
 
