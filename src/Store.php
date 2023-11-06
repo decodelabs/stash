@@ -91,18 +91,11 @@ interface Store extends
     public function pileUpValue(): static;
 
 
-    /**
-     * @param value-of<PileUpPolicy::KEYS> $policy
-     * @return $this
-     */
     public function setPileUpPolicy(
-        string $policy
+        PileUpPolicy $policy
     ): static;
 
-    /**
-     * @return value-of<PileUpPolicy::KEYS>
-     */
-    public function getPileUpPolicy(): string;
+    public function getPileUpPolicy(): PileUpPolicy;
 
     /**
      * @phpstan-param positive-int $time

@@ -111,7 +111,7 @@ interface Config
     public function getAllDrivers(): array;
     public function getDriverSettings(string $driver): ?array;
 
-    public function getPileUpPolicy(string $namespace): ?string;
+    public function getPileUpPolicy(string $namespace): ?PileUpPolicy;
     public function getPreemptTime(string $namespace): ?int;
     public function getSleepTime(string $namespace): ?int;
     public function getSleepAttempts(string $namespace): ?int;

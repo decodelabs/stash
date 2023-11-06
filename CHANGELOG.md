@@ -1,3 +1,4 @@
+* Converted PileUpPolicy to enum
 * Refactored package file structure
 * Updated Genesis dependency
 

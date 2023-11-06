@@ -32,12 +32,9 @@ interface Config
         string $driver
     ): ?array;
 
-    /**
-     * @return value-of<PileUpPolicy::KEYS>|null
-     */
     public function getPileUpPolicy(
         string $namespace
-    ): ?string;
+    ): ?PileUpPolicy;
 
     /**
      * @return positive-int|null

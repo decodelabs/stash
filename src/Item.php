@@ -32,10 +32,7 @@ class Item implements CacheItem
     protected ?Carbon $expiration = null;
     protected bool $locked = false;
 
-    /**
-     * @var value-of<PileUpPolicy::KEYS>|null
-     */
-    protected ?string $pileUpPolicy = null;
+    protected ?PileUpPolicy $pileUpPolicy = null;
 
     /**
      * @phpstan-var positive-int|null
@@ -305,11 +302,10 @@ class Item implements CacheItem
     /**
      * Set pile up policy
      *
-     * @param value-of<PileUpPolicy::KEYS> $policy
      * @return $this
      */
     public function setPileUpPolicy(
-        string $policy
+        PileUpPolicy $policy
     ): static {
         $this->pileUpPolicy = $policy;
         return $this;
@@ -317,10 +313,8 @@ class Item implements CacheItem
 
     /**
      * Get pile up policy
-     *
-     * @return value-of<PileUpPolicy::KEYS>
      */
-    public function getPileUpPolicy(): string
+    public function getPileUpPolicy(): PileUpPolicy
     {
         return $this->pileUpPolicy ?? $this->store->getPileUpPolicy();
     }
@@ -627,7 +621,11 @@ class Item implements CacheItem
             return;
         }
 
-        $options = array_unique([$policy, PileUpPolicy::VALUE, PileUpPolicy::SLEEP]);
+        if ($policy === PileUpPolicy::SLEEP) {
+            $options = [$policy, PileUpPolicy::VALUE];
+        } else {
+            $options = [$policy, PileUpPolicy::SLEEP];
+        }
 
         foreach ($options as $option) {
             switch ($option) {

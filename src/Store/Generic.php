@@ -31,10 +31,7 @@ class Generic implements Store
      */
     protected array $deferred = [];
 
-    /**
-     * @var value-of<PileUpPolicy::KEYS>
-     */
-    protected string $pileUpPolicy = PileUpPolicy::PREEMPT;
+    protected PileUpPolicy $pileUpPolicy = PileUpPolicy::PREEMPT;
 
     /**
      * @phpstan-var positive-int
@@ -534,7 +531,7 @@ class Generic implements Store
      * Set pile up policy
      */
     public function setPileUpPolicy(
-        string $policy
+        PileUpPolicy $policy
     ): static {
         $this->pileUpPolicy = $policy;
         return $this;
@@ -543,7 +540,7 @@ class Generic implements Store
     /**
      * Get pile up policy
      */
-    public function getPileUpPolicy(): string
+    public function getPileUpPolicy(): PileUpPolicy
     {
         return $this->pileUpPolicy;
     }
