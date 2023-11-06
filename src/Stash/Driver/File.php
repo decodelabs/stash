@@ -351,6 +351,28 @@ class File implements Driver
     }
 
 
+    /**
+     * Count items
+     */
+    public function count(
+        string $namespace
+    ): int {
+        return $this->dir->getDir($this->prefix . '/' . $namespace)->countFiles();
+    }
+
+    public function getKeys(
+        string $namespace
+    ): array {
+        $output = [];
+
+        foreach ($this->dir->getDir($this->prefix . '/' . $namespace)->scanFiles() as $name => $file) {
+            $output[] = $name;
+        }
+
+        return $output;
+    }
+
+
 
     /**
      * Delete EVERYTHING in this store

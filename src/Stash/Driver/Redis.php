@@ -11,9 +11,11 @@ namespace DecodeLabs\Stash\Driver;
 
 use DecodeLabs\Coercion;
 use DecodeLabs\Stash\Driver;
-use Memcached as Client;
 
-class Memcache implements Driver
+use Redis as Client;
+use RedisException;
+
+class Redis implements Driver
 {
     use IndexedKeyGenTrait;
 
@@ -24,9 +26,8 @@ class Memcache implements Driver
      */
     public static function isAvailable(): bool
     {
-        return extension_loaded('memcached');
+        return extension_loaded('redis');
     }
-
 
     /**
      * Init with settings
@@ -38,18 +39,25 @@ class Memcache implements Driver
             Coercion::toStringOrNull($settings['prefix'] ?? null)
         );
 
+        $host = Coercion::toStringOrNull($settings['host'] ?? null) ?? '127.0.0.1';
+        $port = Coercion::toIntOrNull($settings['port'] ?? null) ?? 6379;
+        $timeout = Coercion::toFloatOrNull($settings['timeout'] ?? null) ?? 0;
+
         $client = new Client();
-
-        if (is_array($settings['servers'] ?? null)) {
-            $client->addServers($settings['servers']);
-        } else {
-            $host = Coercion::toStringOrNull($settings['host'] ?? null) ?? '127.0.0.1';
-            $port = Coercion::toIntOrNull($settings['port'] ?? null) ?? 11211;
-
-            $client->addServer($host, $port);
-        }
+        $client->connect($host, $port, $timeout);
 
         $this->client = $client;
+    }
+
+    /**
+     * Ensure redis is closed
+     */
+    public function __destruct()
+    {
+        try {
+            $this->client->close();
+        } catch (RedisException $e) {
+        }
     }
 
 
@@ -63,8 +71,20 @@ class Memcache implements Driver
         int $created,
         ?int $expires
     ): bool {
+        if ($expires === null) {
+            $ttl = 0;
+        } else {
+            $ttl = $expires - $created;
+        }
+
         $key = $this->createNestedKey($namespace, $key)[0];
-        return $this->client->set($key, [$value, $expires], $expires ?? 0);
+        $data = serialize([$value, $expires]);
+
+        if ($ttl > 0) {
+            return $this->client->setex($key, $ttl, $data);
+        } else {
+            return $this->client->set($key, $data);
+        }
     }
 
     /**
@@ -76,6 +96,12 @@ class Memcache implements Driver
     ): ?array {
         $key = $this->createNestedKey($namespace, $key)[0];
         $output = $this->client->get($key);
+
+        if (is_string($output)) {
+            $output = unserialize($output);
+        } else {
+            $output = null;
+        }
 
         if (!is_array($output)) {
             $output = null;
@@ -96,11 +122,11 @@ class Memcache implements Driver
         $key = $this->createNestedKey($namespace, $man['normal']);
 
         if ($man['self']) {
-            $this->client->delete($key[0]);
+            $this->client->del($key[0]);
         }
 
         if ($man['children']) {
-            if (!$this->client->increment($key[1])) {
+            if (!$this->client->incr($key[1])) {
                 $this->client->set($key[1], 1);
             }
         }
@@ -117,7 +143,7 @@ class Memcache implements Driver
     ): bool {
         $key = $this->createNestedKey($namespace, null)[1];
 
-        if (!$this->client->increment($key)) {
+        if (!$this->client->incr($key)) {
             $this->client->set($key, 1);
         }
 
@@ -136,7 +162,7 @@ class Memcache implements Driver
         int $expires
     ): bool {
         $key = $this->createLockKey($namespace, $key);
-        return $this->client->set($key, $expires, $expires);
+        return $this->client->setex($key, $expires, (string)($expires - time()));
     }
 
     /**
@@ -148,12 +174,7 @@ class Memcache implements Driver
     ): ?int {
         $key = $this->createLockKey($namespace, $key);
         $output = $this->client->get($key);
-
-        if (!is_int($output)) {
-            $output = null;
-        }
-
-        return $output;
+        return Coercion::toIntOrNull($output);
     }
 
     /**
@@ -164,9 +185,26 @@ class Memcache implements Driver
         string $key
     ): bool {
         $key = $this->createLockKey($namespace, $key);
-        return $this->client->delete($key);
+        return (bool)$this->client->del($key);
     }
 
+
+    /**
+     * Count items
+     */
+    public function count(
+        string $namespace,
+    ): int {
+        return count($this->getKeys($namespace));
+    }
+
+    /**
+     * Get key
+     */
+    public function getKeys(string $namespace): array
+    {
+        return $this->client->keys($this->prefix . ':*');
+    }
 
 
     /**
@@ -175,9 +213,8 @@ class Memcache implements Driver
     protected function getPathIndex(
         string $pathKey
     ): int {
-        return Coercion::toIntOrNull($this->client->get($pathKey)) ?? 0;
+        return (int)$this->client->get($pathKey);
     }
-
 
 
     /**
@@ -185,6 +222,6 @@ class Memcache implements Driver
      */
     public function purge(): void
     {
-        $this->client->flush();
+        $this->client->flushDb();
     }
 }

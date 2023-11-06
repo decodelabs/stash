@@ -11,6 +11,7 @@ namespace DecodeLabs\Stash;
 
 use ArrayAccess;
 use Closure;
+use Countable;
 use Psr\Cache\CacheItemPoolInterface as CacheItemPool;
 use Psr\SimpleCache\CacheInterface as SimpleCache;
 
@@ -20,7 +21,8 @@ use Psr\SimpleCache\CacheInterface as SimpleCache;
 interface Store extends
     CacheItemPool,
     SimpleCache,
-    ArrayAccess
+    ArrayAccess,
+    Countable
 {
     /**
      * @param non-empty-string $namespace
@@ -57,6 +59,13 @@ interface Store extends
     public function __unset(
         string $key
     ): void;
+
+
+
+    /**
+     * @return array<string>
+     */
+    public function getDriverKeys(): array;
 
 
     public function clearDeferred(): bool;

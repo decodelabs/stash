@@ -17,7 +17,8 @@ class PhpArray implements Driver
     use KeyGenTrait;
 
     /**
-     * @var array<string, array{0: mixed, 1: ?int}>
+     * @var array<string, array<mixed>>
+     * @phpstan-var array<string, array{0: mixed, 1: ?int}>
      */
     protected array $values = [];
 
@@ -144,6 +145,34 @@ class PhpArray implements Driver
     ): bool {
         unset($this->locks[$namespace][$key]);
         return true;
+    }
+
+
+    /**
+     * Count items
+     */
+    public function count(
+        string $namespace
+    ): int {
+        return count($this->getKeys($namespace));
+    }
+
+
+    /**
+     * Get keys
+     */
+    public function getKeys(string $namespace): array
+    {
+        $output = [];
+        $prefix = $this->prefix . $this->getKeySeparator() . $namespace . $this->getKeySeparator();
+
+        foreach ($this->values as $key => $value) {
+            if (str_starts_with($key, $prefix)) {
+                $output[] = $key;
+            }
+        }
+
+        return $output;
     }
 
 

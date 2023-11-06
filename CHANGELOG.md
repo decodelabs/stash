@@ -1,4 +1,8 @@
+* Added Dovetail config implementation
 * Converted PileUpPolicy to enum
+* Added getKeys() and count() to Store and Driver
+* Added default prefix to Context
+* Renamed get() to load()
 * Refactored package file structure
 * Updated Genesis dependency
 

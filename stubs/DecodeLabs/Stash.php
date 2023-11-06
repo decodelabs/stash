@@ -26,11 +26,17 @@ class Stash implements Proxy
     public static function getConfig(): ?Ref0 {
         return static::$instance->getConfig();
     }
-    public static function get(string $namespace): Ref1 {
-        return static::$instance->get(...func_get_args());
+    public static function setDefaultPrefix(?string $prefix): Inst {
+        return static::$instance->setDefaultPrefix(...func_get_args());
     }
-    public static function getDriverFor(string $namespace): Ref2 {
-        return static::$instance->getDriverFor(...func_get_args());
+    public static function getDefaultPrefix(): ?string {
+        return static::$instance->getDefaultPrefix();
+    }
+    public static function load(string $namespace): Ref1 {
+        return static::$instance->load(...func_get_args());
+    }
+    public static function loadDriverFor(string $namespace): Ref2 {
+        return static::$instance->loadDriverFor(...func_get_args());
     }
     public static function loadDriver(string $name): ?Ref2 {
         return static::$instance->loadDriver(...func_get_args());

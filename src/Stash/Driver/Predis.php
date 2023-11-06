@@ -172,6 +172,23 @@ class Predis implements Driver
     }
 
 
+    /**
+     * Count items
+     */
+    public function count(
+        string $namespace,
+    ): int {
+        return count($this->getKeys($namespace));
+    }
+
+    /**
+     * Get key
+     */
+    public function getKeys(string $namespace): array
+    {
+        return $this->client->keys($this->prefix . ':*');
+    }
+
 
     /**
      * Get cached path index

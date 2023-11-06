@@ -62,5 +62,17 @@ interface Driver
         string $key
     ): bool;
 
+
+    public function count(
+        string $namespace
+    ): int;
+
+    /**
+     * @return array<string>
+     */
+    public function getKeys(
+        string $namespace
+    ): array;
+
     public function purge(): void;
 }

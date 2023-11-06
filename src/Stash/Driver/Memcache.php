@@ -11,11 +11,9 @@ namespace DecodeLabs\Stash\Driver;
 
 use DecodeLabs\Coercion;
 use DecodeLabs\Stash\Driver;
+use Memcached as Client;
 
-use Redis as Client;
-use RedisException;
-
-class Redis implements Driver
+class Memcache implements Driver
 {
     use IndexedKeyGenTrait;
 
@@ -26,8 +24,9 @@ class Redis implements Driver
      */
     public static function isAvailable(): bool
     {
-        return extension_loaded('redis');
+        return extension_loaded('memcached');
     }
+
 
     /**
      * Init with settings
@@ -39,25 +38,18 @@ class Redis implements Driver
             Coercion::toStringOrNull($settings['prefix'] ?? null)
         );
 
-        $host = Coercion::toStringOrNull($settings['host'] ?? null) ?? '127.0.0.1';
-        $port = Coercion::toIntOrNull($settings['port'] ?? null) ?? 6379;
-        $timeout = Coercion::toFloatOrNull($settings['timeout'] ?? null) ?? 0;
-
         $client = new Client();
-        $client->connect($host, $port, $timeout);
+
+        if (is_array($settings['servers'] ?? null)) {
+            $client->addServers($settings['servers']);
+        } else {
+            $host = Coercion::toStringOrNull($settings['host'] ?? null) ?? '127.0.0.1';
+            $port = Coercion::toIntOrNull($settings['port'] ?? null) ?? 11211;
+
+            $client->addServer($host, $port);
+        }
 
         $this->client = $client;
-    }
-
-    /**
-     * Ensure redis is closed
-     */
-    public function __destruct()
-    {
-        try {
-            $this->client->close();
-        } catch (RedisException $e) {
-        }
     }
 
 
@@ -71,20 +63,8 @@ class Redis implements Driver
         int $created,
         ?int $expires
     ): bool {
-        if ($expires === null) {
-            $ttl = 0;
-        } else {
-            $ttl = $expires - $created;
-        }
-
         $key = $this->createNestedKey($namespace, $key)[0];
-        $data = serialize([$value, $expires]);
-
-        if ($ttl > 0) {
-            return $this->client->setex($key, $ttl, $data);
-        } else {
-            return $this->client->set($key, $data);
-        }
+        return $this->client->set($key, [$value, $expires], $expires ?? 0);
     }
 
     /**
@@ -96,12 +76,6 @@ class Redis implements Driver
     ): ?array {
         $key = $this->createNestedKey($namespace, $key)[0];
         $output = $this->client->get($key);
-
-        if (is_string($output)) {
-            $output = unserialize($output);
-        } else {
-            $output = null;
-        }
 
         if (!is_array($output)) {
             $output = null;
@@ -122,11 +96,11 @@ class Redis implements Driver
         $key = $this->createNestedKey($namespace, $man['normal']);
 
         if ($man['self']) {
-            $this->client->del($key[0]);
+            $this->client->delete($key[0]);
         }
 
         if ($man['children']) {
-            if (!$this->client->incr($key[1])) {
+            if (!$this->client->increment($key[1])) {
                 $this->client->set($key[1], 1);
             }
         }
@@ -143,7 +117,7 @@ class Redis implements Driver
     ): bool {
         $key = $this->createNestedKey($namespace, null)[1];
 
-        if (!$this->client->incr($key)) {
+        if (!$this->client->increment($key)) {
             $this->client->set($key, 1);
         }
 
@@ -162,7 +136,7 @@ class Redis implements Driver
         int $expires
     ): bool {
         $key = $this->createLockKey($namespace, $key);
-        return $this->client->setex($key, $expires, (string)($expires - time()));
+        return $this->client->set($key, $expires, $expires);
     }
 
     /**
@@ -174,7 +148,12 @@ class Redis implements Driver
     ): ?int {
         $key = $this->createLockKey($namespace, $key);
         $output = $this->client->get($key);
-        return Coercion::toIntOrNull($output);
+
+        if (!is_int($output)) {
+            $output = null;
+        }
+
+        return $output;
     }
 
     /**
@@ -185,9 +164,53 @@ class Redis implements Driver
         string $key
     ): bool {
         $key = $this->createLockKey($namespace, $key);
-        return (bool)$this->client->del($key);
+        return $this->client->delete($key);
     }
 
+
+    /**
+     * Count items
+     */
+    public function count(
+        string $namespace,
+    ): int {
+        $output = 0;
+        $keys = $this->client->getAllKeys();
+
+        if (!is_iterable($keys)) {
+            return 0;
+        }
+
+        foreach ($keys as $key) {
+            if (str_starts_with($key, $this->prefix)) {
+                $output++;
+            }
+        }
+
+        return $output;
+    }
+
+    /**
+     * Get key
+     */
+    public function getKeys(string $namespace): array
+    {
+        $output = [];
+        $length = strlen((string)$this->prefix);
+        $keys = $this->client->getAllKeys();
+
+        if (!is_iterable($keys)) {
+            return [];
+        }
+
+        foreach ($keys as $key) {
+            if (str_starts_with($key, $this->prefix)) {
+                $output[] = $key;
+            }
+        }
+
+        return $output;
+    }
 
 
     /**
@@ -196,8 +219,9 @@ class Redis implements Driver
     protected function getPathIndex(
         string $pathKey
     ): int {
-        return (int)$this->client->get($pathKey);
+        return Coercion::toIntOrNull($this->client->get($pathKey)) ?? 0;
     }
+
 
 
     /**
@@ -205,6 +229,6 @@ class Redis implements Driver
      */
     public function purge(): void
     {
-        $this->client->flushDb();
+        $this->client->flush();
     }
 }

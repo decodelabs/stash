@@ -471,6 +471,22 @@ class Generic implements Store
 
 
 
+    /**
+     * Count items
+     */
+    public function count(): int
+    {
+        return $this->driver->count($this->namespace);
+    }
+
+    /**
+     * Get internal keys for loaded driver
+     */
+    public function getDriverKeys(): array
+    {
+        return $this->driver->getKeys($this->namespace);
+    }
+
 
 
     /**

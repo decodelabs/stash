@@ -167,6 +167,31 @@ class Composite implements Driver
 
 
     /**
+     * Count items
+     */
+    public function count(
+        string $namespace
+    ): int {
+        return count($this->getKeys($namespace));
+    }
+
+    /**
+     * Get all keys
+     */
+    public function getKeys(
+        string $namespace
+    ): array {
+        $output = [];
+
+        foreach ($this->drivers as $driver) {
+            $output = array_merge($output, $driver->getKeys($namespace));
+        }
+
+        return array_unique($output);
+    }
+
+
+    /**
      * Delete EVERYTHING in this store
      */
     public function purge(): void

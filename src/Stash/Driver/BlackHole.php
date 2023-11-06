@@ -107,6 +107,25 @@ class BlackHole implements Driver
 
 
     /**
+     * Count items
+     */
+    public function count(
+        string $namespace
+    ): int {
+        return 0;
+    }
+
+    /**
+     * Get keys
+     */
+    public function getKeys(
+        string $namespace
+    ): array {
+        return [];
+    }
+
+
+    /**
      * Delete EVERYTHING in this store
      */
     public function purge(): void
