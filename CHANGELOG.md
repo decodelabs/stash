@@ -1,3 +1,4 @@
+## v0.2.0 (2023-11-06)
 * Added Dovetail config implementation
 * Converted PileUpPolicy to enum
 * Added getKeys() and count() to Store and Driver
