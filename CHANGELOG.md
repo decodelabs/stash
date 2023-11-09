@@ -1,3 +1,5 @@
+* Improved selection of drivers to purge
+
 ## v0.2.0 (2023-11-06)
 * Added Dovetail config implementation
 * Converted PileUpPolicy to enum
