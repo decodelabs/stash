@@ -18,6 +18,7 @@ use DecodeLabs\Glitch\Proxy as Glitch;
 use DecodeLabs\Stash;
 use DecodeLabs\Stash\Store\Generic as GenericStore;
 use DecodeLabs\Veneer;
+use ReflectionClass;
 use Throwable;
 
 class Context
@@ -191,7 +192,8 @@ class Context
      */
     public function purgeAll(): void
     {
-        $drivers = self::DRIVERS + ($this->getConfig()?->getAllDrivers() ?? []);
+        $drivers = ($this->getConfig()?->getAllDrivers() ?? []);
+        $drivers[] = (new ReflectionClass($this->loadDriverFor('default')))->getShortName();
         $drivers = array_unique($drivers);
 
         foreach ($drivers as $name) {
