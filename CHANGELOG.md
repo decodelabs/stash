@@ -1,3 +1,6 @@
+## v0.3.0 (2023-11-14)
+* Renamed enums to PascalCase
+
 ## v0.2.1 (2023-11-09)
 * Improved selection of drivers to purge
 

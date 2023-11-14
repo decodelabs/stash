@@ -239,7 +239,7 @@ class Item implements CacheItem
      */
     public function pileUpIgnore(): static
     {
-        $this->pileUpPolicy = PileUpPolicy::IGNORE;
+        $this->pileUpPolicy = PileUpPolicy::Ignore;
         return $this;
     }
 
@@ -252,7 +252,7 @@ class Item implements CacheItem
     public function pileUpPreempt(
         int $time = null
     ): static {
-        $this->pileUpPolicy = PileUpPolicy::PREEMPT;
+        $this->pileUpPolicy = PileUpPolicy::Preempt;
 
         if ($time !== null) {
             $this->preemptTime = $time;
@@ -272,7 +272,7 @@ class Item implements CacheItem
         int $time = null,
         int $attempts = null
     ): static {
-        $this->pileUpPolicy = PileUpPolicy::SLEEP;
+        $this->pileUpPolicy = PileUpPolicy::Sleep;
 
         if ($time !== null) {
             $this->sleepTime = $time;
@@ -293,7 +293,7 @@ class Item implements CacheItem
     public function pileUpValue(
         mixed $value
     ): static {
-        $this->pileUpPolicy = PileUpPolicy::VALUE;
+        $this->pileUpPolicy = PileUpPolicy::Value;
         $this->fallbackValue = $value;
         return $this;
     }
@@ -582,7 +582,7 @@ class Item implements CacheItem
         $this->fetched = true;
         $policy = $this->getPileUpPolicy();
 
-        if ($policy === PileUpPolicy::IGNORE) {
+        if ($policy === PileUpPolicy::Ignore) {
             return;
         }
 
@@ -590,7 +590,7 @@ class Item implements CacheItem
 
         if ($this->isHit) {
             if (
-                $policy === PileUpPolicy::PREEMPT &&
+                $policy === PileUpPolicy::Preempt &&
                 $ttl > 0 &&
                 $ttl < $this->getPreemptTime()
             ) {
@@ -621,15 +621,15 @@ class Item implements CacheItem
             return;
         }
 
-        if ($policy === PileUpPolicy::SLEEP) {
-            $options = [$policy, PileUpPolicy::VALUE];
+        if ($policy === PileUpPolicy::Sleep) {
+            $options = [$policy, PileUpPolicy::Value];
         } else {
-            $options = [$policy, PileUpPolicy::SLEEP];
+            $options = [$policy, PileUpPolicy::Sleep];
         }
 
         foreach ($options as $option) {
             switch ($option) {
-                case PileUpPolicy::VALUE:
+                case PileUpPolicy::Value:
                     if ($this->fallbackValue !== null) {
                         $this->value = $this->fallbackValue;
                         $this->isHit = true;
@@ -638,7 +638,7 @@ class Item implements CacheItem
 
                     break;
 
-                case PileUpPolicy::SLEEP:
+                case PileUpPolicy::Sleep:
                     $attempts = $this->getSleepAttempts();
                     $time = $this->getSleepTime();
 
