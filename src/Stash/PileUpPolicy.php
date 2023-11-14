@@ -11,8 +11,8 @@ namespace DecodeLabs\Stash;
 
 enum PileUpPolicy: string
 {
-    case IGNORE = 'ignore';
-    case PREEMPT = 'preempt';
-    case SLEEP = 'sleep';
-    case VALUE = 'value';
+    case Ignore = 'ignore';
+    case Preempt = 'preempt';
+    case Sleep = 'sleep';
+    case Value = 'value';
 }

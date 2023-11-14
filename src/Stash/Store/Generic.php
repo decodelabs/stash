@@ -31,7 +31,7 @@ class Generic implements Store
      */
     protected array $deferred = [];
 
-    protected PileUpPolicy $pileUpPolicy = PileUpPolicy::PREEMPT;
+    protected PileUpPolicy $pileUpPolicy = PileUpPolicy::Preempt;
 
     /**
      * @phpstan-var positive-int
@@ -494,7 +494,7 @@ class Generic implements Store
      */
     public function pileUpIgnore(): static
     {
-        $this->pileUpPolicy = PileUpPolicy::IGNORE;
+        $this->pileUpPolicy = PileUpPolicy::Ignore;
         return $this;
     }
 
@@ -504,7 +504,7 @@ class Generic implements Store
     public function pileUpPreempt(
         int $preemptTime = null
     ): static {
-        $this->pileUpPolicy = PileUpPolicy::PREEMPT;
+        $this->pileUpPolicy = PileUpPolicy::Preempt;
 
         if ($preemptTime !== null) {
             $this->preemptTime = $preemptTime;
@@ -520,7 +520,7 @@ class Generic implements Store
         int $time = null,
         int $attempts = null
     ): static {
-        $this->pileUpPolicy = PileUpPolicy::SLEEP;
+        $this->pileUpPolicy = PileUpPolicy::Sleep;
 
         if ($time !== null) {
             $this->sleepTime = $time;
@@ -538,7 +538,7 @@ class Generic implements Store
      */
     public function pileUpValue(): static
     {
-        $this->pileUpPolicy = PileUpPolicy::VALUE;
+        $this->pileUpPolicy = PileUpPolicy::Value;
         return $this;
     }
 
