@@ -9,7 +9,7 @@ on:
   pull_request: null
 
 env:
-  PHP_EXTENSIONS: "intl, memcached, apcu, redis"
+  PHP_EXTENSIONS: "intl, memcached, apcu, redis, :php-psr"
 
 jobs:
   file_consistency:
