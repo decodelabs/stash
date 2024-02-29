@@ -16,6 +16,7 @@ use DecodeLabs\Dovetail\Config\Stash as StashConfig;
 use DecodeLabs\Exceptional;
 use DecodeLabs\Glitch\Proxy as Glitch;
 use DecodeLabs\Stash;
+use DecodeLabs\Stash\FileStore\Generic as GenericFileStore;
 use DecodeLabs\Stash\Store\Generic as GenericStore;
 use DecodeLabs\Veneer;
 use ReflectionClass;
@@ -31,6 +32,11 @@ class Context
      * @var array<string, Store>
      */
     protected array $caches = [];
+
+    /**
+     * @var array<string, FileStore>
+     */
+    protected array $fileStores = [];
 
     protected ?Config $config = null;
     protected ?string $defaultPrefix = null;
@@ -125,6 +131,7 @@ class Context
             }
         }
 
+        $this->caches[$namespace] = $store;
         return $store;
     }
 
@@ -218,6 +225,38 @@ class Context
         }
 
         $driver->purge();
+    }
+
+
+
+
+    /**
+     * Load file store
+     */
+    public function loadFileStore(
+        string $namespace
+    ): FileStore {
+        if (isset($this->fileStores[$namespace])) {
+            return $this->fileStores[$namespace];
+        }
+
+        try {
+            $class = Archetype::resolve(FileStore::class, $namespace);
+        } catch (ArchetypeException $e) {
+            $class = GenericFileStore::class;
+        }
+
+        $config = $this->getConfig();
+        $settings = $config?->getFileStoreSettings($namespace) ?? [];
+
+        if (
+            !isset($settings['prefix']) &&
+            $this->defaultPrefix !== null
+        ) {
+            $settings['prefix'] = $this->defaultPrefix;
+        }
+
+        return $this->fileStores[$namespace] = new $class($namespace, $settings);
     }
 }
 

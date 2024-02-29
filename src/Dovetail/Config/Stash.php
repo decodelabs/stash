@@ -25,6 +25,11 @@ class Stash implements Config, ConfigInterface
             'stores' => [
             ],
             'drivers' => [
+            ],
+            'fileStores' => [
+                'default' => [
+                    'path' => null
+                ]
             ]
         ];
     }
@@ -104,5 +109,15 @@ class Stash implements Config, ConfigInterface
         return
             $this->data->stores->{$namespace}->sleepAttempts->as('?int') ??
             $this->data->stores->default->sleepAttempts->as('?int');
+    }
+
+
+    public function getFileStoreSettings(
+        string $namespace
+    ): ?array {
+        return array_merge(
+            $this->data->fileStores->default->toArray(),
+            $this->data->fileStores->{$namespace}->toArray()
+        );
     }
 }
