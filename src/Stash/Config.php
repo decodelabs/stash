@@ -56,4 +56,11 @@ interface Config
     public function getSleepAttempts(
         string $namespace
     ): ?int;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getFileStoreSettings(
+        string $namespace
+    ): ?array;
 }

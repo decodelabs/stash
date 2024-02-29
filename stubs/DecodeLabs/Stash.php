@@ -11,6 +11,7 @@ use DecodeLabs\Stash\Context as Inst;
 use DecodeLabs\Stash\Config as Ref0;
 use DecodeLabs\Stash\Store as Ref1;
 use DecodeLabs\Stash\Driver as Ref2;
+use DecodeLabs\Stash\FileStore as Ref3;
 
 class Stash implements Proxy
 {
@@ -43,4 +44,7 @@ class Stash implements Proxy
     }
     public static function purgeAll(): void {}
     public static function purge(string $name): void {}
+    public static function loadFileStore(string $namespace): Ref3 {
+        return static::$instance->loadFileStore(...func_get_args());
+    }
 };

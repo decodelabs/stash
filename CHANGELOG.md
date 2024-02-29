@@ -1,3 +1,5 @@
+* Added FileStores
+
 ## v0.3.1 (2024-02-29)
 * Catch exceptions in fetch()
 * Added unlock to items
