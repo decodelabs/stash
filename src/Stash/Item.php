@@ -436,6 +436,21 @@ class Item implements CacheItem
     }
 
     /**
+     * Remove lock entry
+     */
+    public function unlock(): void
+    {
+        if (!$this->locked) {
+            return;
+        }
+
+        $this->store->getDriver()->deleteLock(
+            $this->store->getNamespace(),
+            $this->key
+        );
+    }
+
+    /**
      * Store item to driver
      */
     public function save(): bool

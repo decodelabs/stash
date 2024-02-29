@@ -1,3 +1,6 @@
+* Catch exceptions in fetch()
+* Added unlock to items
+
 ## v0.3.0 (2023-11-14)
 * Renamed enums to PascalCase
 
