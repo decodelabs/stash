@@ -29,7 +29,7 @@ Caches are namespaced to allow for clean separation of data between usage domain
 ```php
 use DecodeLabs\Stash;
 
-$myCache = Stash::get('MyCache');
+$myCache = Stash::load('MyCache');
 
 if(!$cache->has('myValue')) {
     $cache->set('myValue', [1, 2, 3]);
