@@ -21,6 +21,7 @@ use DecodeLabs\Stash\Store;
 
 use Psr\Cache\CacheItemInterface as CacheItem;
 use Psr\Cache\InvalidArgumentException as CacheInvalidArgumentException;
+use Throwable;
 
 class Generic implements Store
 {
@@ -294,7 +295,14 @@ class Generic implements Store
             $item->isMiss()
         ) {
             $item->lock();
-            $value = $generator($item, $this);
+
+            try {
+                $value = $generator($item, $this);
+            } catch (Throwable $e) {
+                $item->unlock();
+                throw $e;
+            }
+
             $item->set($value);
             $item->save();
         }

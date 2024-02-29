@@ -45,9 +45,11 @@
     },
     "autoload": {
         "psr-4": {
-            "DecodeLabs\\Stash\\": "src/Stash/",
-            "DecodeLabs\\Dovetail\\": "src/Dovetail/"
+            "DecodeLabs\\Stash\\": "src/Stash/"
         },
+        "classmap": [
+            "src/Dovetail/"
+        ],
         "files": [
             "src/Stash/Context.php"
         ]
