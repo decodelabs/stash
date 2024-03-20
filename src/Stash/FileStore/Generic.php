@@ -494,4 +494,43 @@ class Generic implements FileStore
         $key = $this->createKey($key);
         return $this->dir->getFile($key);
     }
+
+
+    /**
+     * Delete files older than a certain duration across all findable directories
+     */
+    public static function pruneAll(
+        DateInterval|string|Stringable|int $duration
+    ): int {
+        if (class_exists(Genesis::class)) {
+            $basePath = Genesis::$hub->getLocalDataPath();
+        } else {
+            $basePath = getcwd();
+        }
+
+        $dir = Atlas::dir($basePath . '/fileStore/');
+
+        if (!$dir->exists()) {
+            return 0;
+        }
+
+        $count = 0;
+
+        foreach ($dir->scanDirs() as $name => $subDir) {
+            if (!str_starts_with($name, 'stash@')) {
+                continue;
+            }
+
+            foreach ($subDir->scanFiles() as $file) {
+                if ($file->hasChangedIn($duration)) {
+                    continue;
+                }
+
+                $file->delete();
+                $count++;
+            }
+        }
+
+        return $count;
+    }
 }

@@ -128,4 +128,11 @@ interface FileStore extends
      * @return array<string>
      */
     public function getKeys(): array;
+
+    /**
+     * Delete files older than a certain duration across all findable directories
+     */
+    public static function pruneAll(
+        DateInterval|string|Stringable|int $duration
+    ): int;
 }

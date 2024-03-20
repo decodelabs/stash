@@ -1,3 +1,5 @@
+* Added pruneAll to FileStore
+
 ## v0.3.2 (2024-02-29)
 * Added FileStores
 
