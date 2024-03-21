@@ -9,17 +9,24 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Stash;
 
+use DateInterval;
 use DecodeLabs\Archetype;
 use DecodeLabs\Archetype\NotFoundException as ArchetypeException;
+use DecodeLabs\Atlas;
+use DecodeLabs\Atlas\Dir;
+use DecodeLabs\Coercion;
 use DecodeLabs\Dovetail;
 use DecodeLabs\Dovetail\Config\Stash as StashConfig;
 use DecodeLabs\Exceptional;
+use DecodeLabs\Genesis;
 use DecodeLabs\Glitch\Proxy as Glitch;
 use DecodeLabs\Stash;
 use DecodeLabs\Stash\FileStore\Generic as GenericFileStore;
 use DecodeLabs\Stash\Store\Generic as GenericStore;
 use DecodeLabs\Veneer;
+use Generator;
 use ReflectionClass;
+use Stringable;
 use Throwable;
 
 class Context
@@ -197,14 +204,14 @@ class Context
     /**
      * Purge all drivers
      */
-    public function purgeAll(): void
+    public function purge(): void
     {
         $drivers = ($this->getConfig()?->getAllDrivers() ?? []);
         $drivers[] = (new ReflectionClass($this->loadDriverFor('default')))->getShortName();
         $drivers = array_unique($drivers);
 
         foreach ($drivers as $name) {
-            $this->purge($name);
+            $this->purgeDriver($name);
         }
     }
 
@@ -212,7 +219,7 @@ class Context
     /**
      * Purge driver
      */
-    public function purge(
+    public function purgeDriver(
         string $name
     ): void {
         try {
@@ -247,7 +254,7 @@ class Context
         }
 
         $config = $this->getConfig();
-        $settings = $config?->getFileStoreSettings($namespace) ?? [];
+        $settings = $config?->getFileStoreSettings($namespace);
 
         if (
             !isset($settings['prefix']) &&
@@ -257,6 +264,84 @@ class Context
         }
 
         return $this->fileStores[$namespace] = new $class($namespace, $settings);
+    }
+
+    /**
+     * Prune file stores
+     */
+    public function pruneFileStores(
+        DateInterval|string|Stringable|int $duration
+    ): int {
+        $count = 0;
+
+        foreach ($this->scanFileStoreDirectories() as $dir) {
+            foreach ($dir->scanFiles() as $file) {
+                if ($file->hasChangedIn($duration)) {
+                    continue;
+                }
+
+                $file->delete();
+                $count++;
+            }
+        }
+
+        return $count;
+    }
+
+    /**
+     * Purge file stores
+     */
+    public function purgeFileStores(): void
+    {
+        foreach ($this->scanFileStoreDirectories() as $dir) {
+            $dir->delete();
+        }
+    }
+
+    /**
+     * Load all file stores
+     *
+     * @return Generator<string, Dir>
+     */
+    protected function scanFileStoreDirectories(): Generator
+    {
+        // Base
+        if (class_exists(Genesis::class)) {
+            $basePath = Genesis::$hub->getLocalDataPath();
+        } else {
+            $basePath = getcwd();
+        }
+
+        $dir = Atlas::dir($basePath . '/stash/fileStore/');
+        $dirs = [];
+
+        if ($dir->exists()) {
+            foreach ($dir->scanDirs() as $subDir) {
+                $dirs[(string)$subDir] = true;
+                yield (string)$subDir => $subDir;
+            }
+        }
+
+        // Config
+        $config = $this->getConfig();
+
+        foreach ($config?->getAllFileStoreSettings() ?? [] as $name => $settings) {
+            if (
+                !isset($settings['path']) ||
+                empty($settings['path'])
+            ) {
+                continue;
+            }
+
+            $dir = Atlas::dir(Coercion::toString($settings['path']));
+
+            if (
+                $dir->exists() &&
+                !isset($dirs[(string)$dir])
+            ) {
+                yield (string)$dir => $dir;
+            }
+        }
     }
 }
 

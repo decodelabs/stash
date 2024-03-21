@@ -62,5 +62,10 @@ interface Config
      */
     public function getFileStoreSettings(
         string $namespace
-    ): ?array;
+    ): array;
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function getAllFileStoreSettings(): array;
 }

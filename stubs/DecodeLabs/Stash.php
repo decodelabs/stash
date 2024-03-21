@@ -12,6 +12,8 @@ use DecodeLabs\Stash\Config as Ref0;
 use DecodeLabs\Stash\Store as Ref1;
 use DecodeLabs\Stash\Driver as Ref2;
 use DecodeLabs\Stash\FileStore as Ref3;
+use DateInterval as Ref4;
+use Stringable as Ref5;
 
 class Stash implements Proxy
 {
@@ -42,9 +44,13 @@ class Stash implements Proxy
     public static function loadDriver(string $name): ?Ref2 {
         return static::$instance->loadDriver(...func_get_args());
     }
-    public static function purgeAll(): void {}
-    public static function purge(string $name): void {}
+    public static function purge(): void {}
+    public static function purgeDriver(string $name): void {}
     public static function loadFileStore(string $namespace): Ref3 {
         return static::$instance->loadFileStore(...func_get_args());
     }
+    public static function pruneFileStores(Ref4|Ref5|string|int $duration): int {
+        return static::$instance->pruneFileStores(...func_get_args());
+    }
+    public static function purgeFileStores(): void {}
 };

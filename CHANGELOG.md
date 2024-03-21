@@ -1,4 +1,9 @@
-* Added pruneAll to FileStore
+* Renamed default file cache paths
+* Added prune to FileStore
+* Added purge to FileStore
+* Removed SimpleCache interface from FileStore
+* Improved FileStore interface
+* Renamed cache purge methods
 
 ## v0.3.2 (2024-02-29)
 * Added FileStores

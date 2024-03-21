@@ -57,7 +57,7 @@ class File implements Driver
             }
 
             $name = lcfirst((new ReflectionClass($this))->getShortName());
-            $path = $basePath . '/cache/stash@' . $name;
+            $path = $basePath . '/stash/cache@' . $name;
         }
 
         $this->dir = new Dir($path);

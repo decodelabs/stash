@@ -52,7 +52,7 @@ class Generic implements FileStore
                 $basePath = getcwd();
             }
 
-            $path = $basePath . '/fileStore/stash@' . $this->normalizeKey($namespace);
+            $path = $basePath . '/stash/fileStore/' . $this->normalizeKey($namespace);
         }
 
         $this->dir = new Dir($path);
@@ -119,8 +119,7 @@ class Generic implements FileStore
      */
     public function set(
         string $key,
-        mixed $file,
-        int|DateInterval|null $ttl = null
+        string|File $file
     ): bool {
         $this->dir->ensureExists($this->dirPerms);
         $file = $this->normalizeFile($file);
@@ -136,11 +135,10 @@ class Generic implements FileStore
      * @param iterable<string, string|File> $values
      */
     public function setMultiple(
-        iterable $values,
-        int|DateInterval|null $ttl = null
+        iterable $values
     ): bool {
         foreach ($values as $key => $file) {
-            if (!$this->set($key, $file, $ttl)) {
+            if (!$this->set($key, $file)) {
                 return false;
             }
         }
@@ -150,19 +148,16 @@ class Generic implements FileStore
 
     /**
      * Get file
-     *
-     * @param string|File|null $default
-     * @return ?File
      */
     public function get(
         string $key,
-        mixed $default = null
-    ): mixed {
+        DateInterval|string|Stringable|int|null $ttl = null
+    ): ?File {
         $file = $this->getFile($key);
         $file->clearStatCache();
 
         if (!$file->exists()) {
-            return $this->normalizeFile($default);
+            return null;
         }
 
         return $file;
@@ -172,17 +167,78 @@ class Generic implements FileStore
      * Get multiple files
      *
      * @param iterable<string> $keys
-     * @param string|File|null $default
      * @return iterable<string, ?File>
      */
     public function getMultiple(
         iterable $keys,
-        mixed $default = null
+        DateInterval|string|Stringable|int|null $ttl = null
     ): iterable {
         $output = [];
 
         foreach ($keys as $key) {
-            $output[$key] = $this->get($key, $default);
+            $output[$key] = $this->get($key, $ttl);
+        }
+
+        return $output;
+    }
+
+
+    public function getOlderThan(
+        DateInterval|string|Stringable|int $ttl
+    ): iterable {
+        $output = [];
+        $ttl = Coercion::toDateInterval($ttl);
+
+        foreach ($this->dir->scanFiles() as $name => $file) {
+            if (!$file->hasChangedIn($ttl)) {
+                $name = substr($name, strlen($this->prefix), -strlen(self::EXTENSION));
+                $output[$name] = $file;
+            }
+        }
+
+        return $output;
+    }
+
+    public function getBeginningWith(
+        string $prefix
+    ): iterable {
+        $prefix = $this->normalizeKey($prefix);
+        $length = strlen($prefix);
+        $output = [];
+
+        foreach ($this->dir->scanFiles() as $name => $file) {
+            $name = substr($name, strlen($this->prefix), -strlen(self::EXTENSION));
+
+            if (substr($name, 0, $length) === $prefix) {
+                $output[$name] = $file;
+            }
+        }
+
+        return $output;
+    }
+
+    public function getMatches(
+        string $pattern
+    ): iterable {
+        $output = [];
+
+        foreach ($this->dir->scanFiles() as $name => $file) {
+            $name = substr($name, strlen($this->prefix), -strlen(self::EXTENSION));
+
+            if (preg_match($pattern, $name)) {
+                $output[$name] = $file;
+            }
+        }
+
+        return $output;
+    }
+
+    public function getKeys(): iterable
+    {
+        $output = [];
+
+        foreach ($this->dir->scanFiles() as $name => $file) {
+            $output[] = substr($name, strlen($this->prefix), -strlen(self::EXTENSION));
         }
 
         return $output;
@@ -202,56 +258,15 @@ class Generic implements FileStore
         );
     }
 
-    public function getOlderThan(
-        DateInterval|string|Stringable|int $duration
-    ): array {
-        $output = [];
-        $duration = Coercion::toDateInterval($duration);
-
-        foreach ($this->dir->scanFiles() as $name => $file) {
-            if (!$file->hasChangedIn($duration)) {
-                $name = substr($name, strlen($this->prefix), -strlen(self::EXTENSION));
-                $output[$name] = $file;
-            }
+    public function getCreationTime(
+        string $key
+    ): ?int {
+        if (null === ($date = $this->getCreationDate($key))) {
+            return null;
         }
 
-        return $output;
+        return $date->getTimestamp();
     }
-
-    public function getBeginningWith(
-        string $prefix
-    ): array {
-        $prefix = $this->normalizeKey($prefix);
-        $length = strlen($prefix);
-        $output = [];
-
-        foreach ($this->dir->scanFiles() as $name => $file) {
-            $name = substr($name, strlen($this->prefix), -strlen(self::EXTENSION));
-
-            if (substr($name, 0, $length) === $prefix) {
-                $output[$name] = $file;
-            }
-        }
-
-        return $output;
-    }
-
-    public function getMatches(
-        string $pattern
-    ): array {
-        $output = [];
-
-        foreach ($this->dir->scanFiles() as $name => $file) {
-            $name = substr($name, strlen($this->prefix), -strlen(self::EXTENSION));
-
-            if (preg_match($pattern, $name)) {
-                $output[$name] = $file;
-            }
-        }
-
-        return $output;
-    }
-
 
     public function fetch(
         string $key,
@@ -269,7 +284,6 @@ class Generic implements FileStore
 
         return $this->get($key);
     }
-
 
     public function has(
         string $key,
@@ -310,24 +324,15 @@ class Generic implements FileStore
         return true;
     }
 
-    /**
-     * Delete multiple files
-     */
-    public function deleteMultiple(
-        iterable $keys
-    ): bool {
-        return $this->delete(...$keys);
-    }
-
 
     public function deleteOlderThan(
-        DateInterval|string|Stringable|int $duration
+        DateInterval|string|Stringable|int $ttl
     ): int {
         $output = 0;
-        $duration = Coercion::toDateInterval($duration);
+        $ttl = Coercion::toDateInterval($ttl);
 
         foreach ($this->dir->scanFiles() as $file) {
-            if (!$file->hasChangedIn($duration)) {
+            if (!$file->hasChangedIn($ttl)) {
                 $output++;
                 $file->delete();
             }
@@ -353,8 +358,6 @@ class Generic implements FileStore
         return $output;
     }
 
-
-
     public function deleteMatches(
         string $pattern
     ): int {
@@ -372,22 +375,9 @@ class Generic implements FileStore
         return $output;
     }
 
-    public function getKeys(): array
-    {
-        $output = [];
-
-        foreach ($this->dir->scanFiles() as $name => $file) {
-            $output[] = substr($name, strlen($this->prefix), -strlen(self::EXTENSION));
-        }
-
-        return $output;
-    }
-
-
-    public function clear(): bool
+    public function clear(): void
     {
         $this->dir->emptyOut();
-        return true;
     }
 
 
@@ -453,7 +443,7 @@ class Generic implements FileStore
         return Dictum::text($key)
             ->toAscii()
             ->replace(' ', '-')
-            ->regexReplace('[\/\\?%*:|"<>]', '_')
+            ->regexReplace('[\/\\\?%*:|"<>]', '_')
             ->__toString();
     }
 
@@ -493,44 +483,5 @@ class Generic implements FileStore
     ): File {
         $key = $this->createKey($key);
         return $this->dir->getFile($key);
-    }
-
-
-    /**
-     * Delete files older than a certain duration across all findable directories
-     */
-    public static function pruneAll(
-        DateInterval|string|Stringable|int $duration
-    ): int {
-        if (class_exists(Genesis::class)) {
-            $basePath = Genesis::$hub->getLocalDataPath();
-        } else {
-            $basePath = getcwd();
-        }
-
-        $dir = Atlas::dir($basePath . '/fileStore/');
-
-        if (!$dir->exists()) {
-            return 0;
-        }
-
-        $count = 0;
-
-        foreach ($dir->scanDirs() as $name => $subDir) {
-            if (!str_starts_with($name, 'stash@')) {
-                continue;
-            }
-
-            foreach ($subDir->scanFiles() as $file) {
-                if ($file->hasChangedIn($duration)) {
-                    continue;
-                }
-
-                $file->delete();
-                $count++;
-            }
-        }
-
-        return $count;
     }
 }
