@@ -114,10 +114,22 @@ class Stash implements Config, ConfigInterface
 
     public function getFileStoreSettings(
         string $namespace
-    ): ?array {
+    ): array {
         return array_merge(
             $this->data->fileStores->default->toArray(),
             $this->data->fileStores->{$namespace}->toArray()
         );
+    }
+
+    public function getAllFileStoreSettings(): array
+    {
+        $output = [];
+
+        foreach ($this->data->fileStores->getKeys() as $key) {
+            $key = (string)$key;
+            $output[$key] = $this->getFileStoreSettings($key);
+        }
+
+        return $output;
     }
 }
