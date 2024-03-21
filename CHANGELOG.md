@@ -1,3 +1,4 @@
+## v0.4.1 (2024-03-21)
 * Added TTL to FileStore fetch()
 * Fixed FileStore get() TTL
 
