@@ -1,3 +1,7 @@
+## v0.4.1 (2024-03-21)
+* Added TTL to FileStore fetch()
+* Fixed FileStore get() TTL
+
 ## v0.4.0 (2024-03-21)
 * Renamed default file cache paths
 * Added prune to FileStore

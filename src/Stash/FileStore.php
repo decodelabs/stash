@@ -145,7 +145,8 @@ interface FileStore extends
      */
     public function fetch(
         string $key,
-        Closure $generator
+        Closure $generator,
+        DateInterval|string|Stringable|int|null $ttl = null
     ): ?File;
 
     /**

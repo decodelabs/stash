@@ -156,7 +156,13 @@ class Generic implements FileStore
         $file = $this->getFile($key);
         $file->clearStatCache();
 
-        if (!$file->exists()) {
+        if (
+            !$file->exists() ||
+            (
+                $ttl !== null &&
+                !$file->hasChangedIn($ttl)
+            )
+        ) {
             return null;
         }
 
@@ -270,9 +276,10 @@ class Generic implements FileStore
 
     public function fetch(
         string $key,
-        Closure $generator
+        Closure $generator,
+        DateInterval|string|Stringable|int|null $ttl = null
     ): ?File {
-        $file = $this->get($key);
+        $file = $this->get($key, $ttl);
 
         if ($file === null) {
             try {
