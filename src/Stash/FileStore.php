@@ -85,7 +85,7 @@ interface FileStore extends
      * @param iterable<string> $keys
      * @return iterable<string, File>
      */
-    public function getMultiple(
+    public function scan(
         iterable $keys,
         DateInterval|string|Stringable|int $ttl
     ): iterable;
@@ -95,7 +95,7 @@ interface FileStore extends
      *
      * @return iterable<string, File>
      */
-    public function getOlderThan(
+    public function scanOlderThan(
         DateInterval|string|Stringable|int $ttl
     ): iterable;
 
@@ -104,7 +104,7 @@ interface FileStore extends
      *
      * @return iterable<string, File>
      */
-    public function getBeginningWith(
+    public function scanBeginningWith(
         string $prefix
     ): iterable;
 
@@ -113,16 +113,23 @@ interface FileStore extends
     *
     * @return iterable<string, File>
     */
-    public function getMatches(
+    public function scanMatches(
         string $pattern
     ): iterable;
+
+    /**
+     * Get list of all files
+     *
+     * @return iterable<string, File>
+     */
+    public function scanAll(): iterable;
 
     /**
      * Get list of file name keys
      *
      * @return iterable<string>
      */
-    public function getKeys(): iterable;
+    public function scanKeys(): iterable;
 
     /**
      * Get date the file was stored
