@@ -175,7 +175,7 @@ class Generic implements FileStore
      * @param iterable<string> $keys
      * @return iterable<string, ?File>
      */
-    public function getMultiple(
+    public function scan(
         iterable $keys,
         DateInterval|string|Stringable|int|null $ttl = null
     ): iterable {
@@ -189,7 +189,7 @@ class Generic implements FileStore
     }
 
 
-    public function getOlderThan(
+    public function scanOlderThan(
         DateInterval|string|Stringable|int $ttl
     ): iterable {
         $output = [];
@@ -205,7 +205,7 @@ class Generic implements FileStore
         return $output;
     }
 
-    public function getBeginningWith(
+    public function scanBeginningWith(
         string $prefix
     ): iterable {
         $prefix = $this->normalizeKey($prefix);
@@ -223,7 +223,7 @@ class Generic implements FileStore
         return $output;
     }
 
-    public function getMatches(
+    public function scanMatches(
         string $pattern
     ): iterable {
         $output = [];
@@ -239,15 +239,19 @@ class Generic implements FileStore
         return $output;
     }
 
-    public function getKeys(): iterable
+    public function scanAll(): iterable
     {
-        $output = [];
-
         foreach ($this->dir->scanFiles() as $name => $file) {
-            $output[] = substr($name, strlen($this->prefix), -strlen(self::EXTENSION));
+            $name = substr($name, strlen($this->prefix), -strlen(self::EXTENSION));
+            yield $name => $file;
         }
+    }
 
-        return $output;
+    public function scanKeys(): iterable
+    {
+        foreach ($this->dir->scanFiles() as $name => $file) {
+            yield substr($name, strlen($this->prefix), -strlen(self::EXTENSION));
+        }
     }
 
     public function getCreationDate(
