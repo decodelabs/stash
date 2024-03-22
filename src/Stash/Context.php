@@ -36,7 +36,7 @@ class Context
     ];
 
     /**
-     * @var array<string, Store>
+     * @var array<string, Store<mixed>>
      */
     protected array $caches = [];
 
@@ -98,6 +98,8 @@ class Context
 
     /**
      * Get cache store by name
+     *
+     * @return Store<mixed>
      */
     public function load(
         string $namespace

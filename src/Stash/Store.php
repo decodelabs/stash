@@ -16,7 +16,8 @@ use Psr\Cache\CacheItemPoolInterface as CacheItemPool;
 use Psr\SimpleCache\CacheInterface as SimpleCache;
 
 /**
- * @extends ArrayAccess<string, mixed>
+ * @template T of mixed
+ * @extends ArrayAccess<string, T>
  */
 interface Store extends
     CacheItemPool,
@@ -36,8 +37,7 @@ interface Store extends
     public function getDriver(): Driver;
 
     /**
-     * @template T
-     * @param Closure(Item, Store): T $generator
+     * @param Closure(Item<T>, Store<T>): T $generator
      * @return T
      */
     public function fetch(
@@ -45,11 +45,17 @@ interface Store extends
         Closure $generator
     ): mixed;
 
+    /**
+     * @param T $value
+     */
     public function __set(
         string $key,
         mixed $value
     ): void;
 
+    /**
+     * @return Item<T>
+     */
     public function __get(
         string $key
     ): Item;
