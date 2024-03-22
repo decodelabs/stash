@@ -36,7 +36,9 @@ interface Store extends
     public function getDriver(): Driver;
 
     /**
-     * @param Closure(Item, Store): mixed $generator
+     * @template T
+     * @param Closure(Item, Store): T $generator
+     * @return T
      */
     public function fetch(
         string $key,
