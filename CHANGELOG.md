@@ -1,3 +1,4 @@
+## v0.5.2 (2024-03-22)
 * Added full generics to Stores
 
 ## v0.5.1 (2024-03-22)
