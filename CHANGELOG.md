@@ -1,3 +1,4 @@
+## v0.5.1 (2024-03-22)
 * Added generic return type to fetch()
 
 ## v0.5.0 (2024-03-22)
