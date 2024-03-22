@@ -1,3 +1,4 @@
+## v0.5.0 (2024-03-22)
 * Renamed FileStore multi-get methods to scan*()
 
 ## v0.4.1 (2024-03-21)
