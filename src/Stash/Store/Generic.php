@@ -23,12 +23,16 @@ use Psr\Cache\CacheItemInterface as CacheItem;
 use Psr\Cache\InvalidArgumentException as CacheInvalidArgumentException;
 use Throwable;
 
+/**
+ * @template T of mixed
+ * @implements Store<T>
+ */
 class Generic implements Store
 {
     protected string $namespace;
 
     /**
-     * @var array<string, Item>
+     * @var array<string, Item<T>>
      */
     protected array $deferred = [];
 
@@ -84,6 +88,9 @@ class Generic implements Store
 
     /**
      * Fetches a value from the cache.
+     *
+     * @param ?T $default
+     * @return ?T
      */
     public function get(
         string $key,
@@ -103,6 +110,8 @@ class Generic implements Store
 
     /**
      * Retrive item object, regardless of hit or miss
+     *
+     * @return Item<T>
      */
     public function getItem(
         string $key
@@ -121,7 +130,8 @@ class Generic implements Store
      * Obtains multiple cache items by their unique keys.
      *
      * @param iterable<int, string> $keys
-     * @return iterable<string, mixed>
+     * @param ?T $default
+     * @return iterable<string, ?T>
      */
     public function getMultiple(
         iterable $keys,
@@ -145,7 +155,7 @@ class Generic implements Store
      * Retrieve a list of items
      *
      * @param array<string> $keys
-     * @return iterable<string, Item>
+     * @return iterable<string, Item<T>>
      */
     public function getItems(
         array $keys = []
@@ -307,12 +317,16 @@ class Generic implements Store
             $item->save();
         }
 
-        return $item->get();
+        /** @var T $output */
+        $output = $item->get();
+        return $output;
     }
 
 
     /**
      * Persists data in the cache, uniquely referenced by a key with an optional expiration TTL time.
+     *
+     * @param T $value
      */
     public function set(
         string $key,
@@ -331,7 +345,7 @@ class Generic implements Store
     /**
      * Persists a set of key => value pairs in the cache, with an optional TTL.
      *
-     * @param iterable<string, mixed> $values
+     * @param iterable<string, T> $values
      */
     public function setMultiple(
         iterable $values,
@@ -357,6 +371,8 @@ class Generic implements Store
 
     /**
      * Persists a cache item immediately.
+     *
+     * @param Item<T> $item
      */
     public function save(
         CacheItem $item
@@ -368,6 +384,8 @@ class Generic implements Store
 
     /**
      * Sets a cache item to be persisted later.
+     *
+     * @param Item<T> $item
      */
     public function saveDeferred(
         CacheItem $item
@@ -440,6 +458,8 @@ class Generic implements Store
 
     /**
      * Shortcut set()
+     *
+     * @param T $value
      */
     public function offsetSet(
         mixed $key,
@@ -450,6 +470,8 @@ class Generic implements Store
 
     /**
      * Shortcut get()
+     *
+     * @return ?T
      */
     public function offsetGet(
         mixed $key
@@ -657,6 +679,8 @@ class Generic implements Store
 
     /**
      * Check cache item
+     *
+     * @return Item<T>
      */
     protected function checkCacheItem(
         CacheItem $item
@@ -676,9 +700,9 @@ class Generic implements Store
     /**
      * Wrap simple errors
      *
-     * @template T
-     * @param Closure(): T $func
-     * @return T
+     * @template E
+     * @param Closure(): E $func
+     * @return E
      */
     protected function wrapSimpleErrors(
         Closure $func

@@ -1,3 +1,5 @@
+* Added full generics to Stores
+
 ## v0.5.1 (2024-03-22)
 * Added generic return type to fetch()
 

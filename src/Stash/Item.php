@@ -13,19 +13,24 @@ use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use DateInterval;
 use DateTimeInterface;
-
 use DecodeLabs\Coercion;
-
 use Psr\Cache\CacheItemInterface as CacheItem;
-
 use Stringable;
 
+/**
+ * @template T of mixed
+ */
 class Item implements CacheItem
 {
     public const LOCK_TTL = 30;
 
     protected string $key;
+
+    /**
+     * @var ?T
+     */
     protected mixed $value;
+
     protected bool $isHit = false;
     protected bool $fetched = false;
 
@@ -50,10 +55,16 @@ class Item implements CacheItem
     protected ?int $sleepAttempts = null;
 
     protected mixed $fallbackValue = null;
+
+    /**
+     * @var Store<T>
+     */
     protected Store $store;
 
     /**
      * Init with store and key
+     *
+     * @param Store<T> $store
      */
     public function __construct(
         Store $store,
@@ -65,6 +76,8 @@ class Item implements CacheItem
 
     /**
      * Get parent store
+     *
+     * @return Store<T>
      */
     public function getStore(): Store
     {
@@ -82,6 +95,7 @@ class Item implements CacheItem
     /**
      * Sets the value represented by this cache item.
      *
+     * @param T $value
      * @return $this
      */
     public function set(
@@ -95,6 +109,8 @@ class Item implements CacheItem
 
     /**
      * Retrieves the value of the item from the cache associated with this object's key.
+     *
+     * @return ?T
      */
     public function get(): mixed
     {
@@ -504,6 +520,8 @@ class Item implements CacheItem
 
     /**
      * Set value and save
+     *
+     * @param T $value
      */
     public function update(
         mixed $value,
@@ -527,7 +545,10 @@ class Item implements CacheItem
             $this->setExpiration($ttl);
         }
 
-        $this->set($this->get());
+        if (null !== ($value = $this->get())) {
+            $this->set($value);
+        }
+
         return $this->save();
     }
 
