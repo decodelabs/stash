@@ -1,3 +1,5 @@
+* Fixed generics across whole Store interface
+
 ## v0.5.2 (2024-03-22)
 * Added full generics to Stores
 

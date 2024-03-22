@@ -12,6 +12,8 @@ namespace DecodeLabs\Stash;
 use ArrayAccess;
 use Closure;
 use Countable;
+use DateInterval;
+use Psr\Cache\CacheItemInterface as CacheItem;
 use Psr\Cache\CacheItemPoolInterface as CacheItemPool;
 use Psr\SimpleCache\CacheInterface as SimpleCache;
 
@@ -37,6 +39,48 @@ interface Store extends
     public function getDriver(): Driver;
 
     /**
+     * Fetches a value from the cache.
+     *
+     * @param ?T $default
+     * @return ?T
+     */
+    public function get(
+        string $key,
+        mixed $default = null
+    ): mixed;
+
+    /**
+     * Retrive item object, regardless of hit or miss
+     *
+     * @return Item<T>
+     */
+    public function getItem(
+        string $key
+    ): Item;
+
+    /**
+     * Obtains multiple cache items by their unique keys.
+     *
+     * @param iterable<int, string> $keys
+     * @param ?T $default
+     * @return iterable<string, ?T>
+     */
+    public function getMultiple(
+        iterable $keys,
+        mixed $default = null
+    ): iterable;
+
+    /**
+     * Retrieve a list of items
+     *
+     * @param array<string> $keys
+     * @return iterable<string, Item<T>>
+     */
+    public function getItems(
+        array $keys = []
+    ): iterable;
+
+    /**
      * @param Closure(Item<T>, Store<T>): T $generator
      * @return T
      */
@@ -44,6 +88,69 @@ interface Store extends
         string $key,
         Closure $generator
     ): mixed;
+
+    /**
+     * Determines whether an item is present in the cache.
+     */
+    public function has(
+        string $key,
+        string ...$keys
+    ): bool;
+
+    /**
+     * Delete an item from the cache by its unique key.
+     */
+    public function delete(
+        string $key,
+        string ...$keys
+    ): bool;
+
+    /**
+     * Removes the item from the pool.
+     */
+    public function deleteItem(
+        string $key,
+        string ...$keys
+    ): bool;
+
+    /**
+     * Persists data in the cache, uniquely referenced by a key with an optional expiration TTL time.
+     *
+     * @param T $value
+     */
+    public function set(
+        string $key,
+        mixed $value,
+        int|DateInterval|null $ttl = null
+    ): bool;
+
+    /**
+     * Persists a set of key => value pairs in the cache, with an optional TTL.
+     *
+     * @param iterable<string, T> $values
+     */
+    public function setMultiple(
+        iterable $values,
+        int|DateInterval|null $ttl = null
+    ): bool;
+
+    /**
+     * Persists a cache item immediately.
+     *
+     * @param Item<T> $item
+     */
+    public function save(
+        CacheItem $item
+    ): bool;
+
+    /**
+     * Sets a cache item to be persisted later.
+     *
+     * @param Item<T> $item
+     */
+    public function saveDeferred(
+        CacheItem $item
+    ): bool;
 
     /**
      * @param T $value
