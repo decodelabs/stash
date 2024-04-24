@@ -21,7 +21,7 @@
 
         "psr/cache": "^3.0",
         "psr/simple-cache": "^3.0",
-        "nesbot/carbon": "^2.62"
+        "nesbot/carbon": "^2|^3"
     },
     "require-dev": {
         "decodelabs/dovetail": "^0.1.3|^0.2",
