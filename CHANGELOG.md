@@ -1,3 +1,6 @@
+## v0.5.4 (2024-04-24)
+* Updated Carbon dependency
+
 ## v0.5.3 (2024-03-22)
 * Fixed generics across whole Store interface
 
