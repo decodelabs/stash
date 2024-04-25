@@ -132,7 +132,6 @@ By default, newly loaded caches use a generic Store implementation, however if y
 namespace MyApp;
 
 use DecodeLabs\Archetype;
-use DecodeLabs\Archetype\Resolver\Extension as ArchetypeExtension;
 use DecodeLabs\Stash\Store;
 use DecodeLabs\Stash\Store\Generic;
 
@@ -147,9 +146,9 @@ class MyCache extends Generic
     }
 }
 
-Archetype::register(new ArchetypeExtension(
-    Store::class, namespace::class
-))
+Archetype::extend(Store::class, namespace::class);
+
+$myCache = Stash::load('MyCache'); // Will now use MyApp\MyCache
 ```
 
 
