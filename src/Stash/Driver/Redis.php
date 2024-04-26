@@ -213,7 +213,7 @@ class Redis implements Driver
     protected function getPathIndex(
         string $pathKey
     ): int {
-        return (int)$this->client->get($pathKey);
+        return Coercion::toInt($this->client->get($pathKey));
     }
 
 
