@@ -146,7 +146,7 @@ class MyCache extends Generic
     }
 }
 
-Archetype::extend(Store::class, namespace::class);
+Archetype::map(Store::class, namespace::class);
 
 $myCache = Stash::load('MyCache'); // Will now use MyApp\MyCache
 ```

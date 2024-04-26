@@ -1,3 +1,5 @@
+* Updated Archetype dependency
+
 ## v0.5.4 (2024-04-24)
 * Updated Carbon dependency
 
