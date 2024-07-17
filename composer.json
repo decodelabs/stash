@@ -17,15 +17,15 @@
         "decodelabs/dictum": "^0.6.0",
         "decodelabs/exceptional": "^0.4.3",
         "decodelabs/glitch-support": "^0.4",
-        "decodelabs/veneer": "^0.10.10",
+        "decodelabs/veneer": "^0.11.1",
 
         "psr/cache": "^3.0",
         "psr/simple-cache": "^3.0",
         "nesbot/carbon": "^2|^3"
     },
     "require-dev": {
-        "decodelabs/dovetail": "^0.1.3|^0.2",
-        "decodelabs/genesis": "^0.7.1|^0.8",
+        "decodelabs/dovetail": "^0.2",
+        "decodelabs/genesis": "^0.8",
         "decodelabs/phpstan-decodelabs": "^0.6",
 
         "ext-memcached": "^3.2",
