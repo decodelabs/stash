@@ -14,7 +14,7 @@ use Throwable;
 
 class PhpFile extends File
 {
-    public const EXTENSION = '.php';
+    protected const Extension = '.php';
 
     /**
      * Store item data in file

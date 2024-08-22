@@ -24,7 +24,7 @@ use Throwable;
 
 class Generic implements FileStore
 {
-    public const EXTENSION = '.cache';
+    protected const Extension = '.cache';
 
     protected string $prefix = 'c-';
     protected string $namespace;
@@ -197,7 +197,7 @@ class Generic implements FileStore
 
         foreach ($this->dir->scanFiles() as $name => $file) {
             if (!$file->hasChangedIn($ttl)) {
-                $name = substr($name, strlen($this->prefix), -strlen(self::EXTENSION));
+                $name = substr($name, strlen($this->prefix), -strlen(self::Extension));
                 $output[$name] = $file;
             }
         }
@@ -213,7 +213,7 @@ class Generic implements FileStore
         $output = [];
 
         foreach ($this->dir->scanFiles() as $name => $file) {
-            $name = substr($name, strlen($this->prefix), -strlen(self::EXTENSION));
+            $name = substr($name, strlen($this->prefix), -strlen(self::Extension));
 
             if (substr($name, 0, $length) === $prefix) {
                 $output[$name] = $file;
@@ -229,7 +229,7 @@ class Generic implements FileStore
         $output = [];
 
         foreach ($this->dir->scanFiles() as $name => $file) {
-            $name = substr($name, strlen($this->prefix), -strlen(self::EXTENSION));
+            $name = substr($name, strlen($this->prefix), -strlen(self::Extension));
 
             if (preg_match($pattern, $name)) {
                 $output[$name] = $file;
@@ -242,7 +242,7 @@ class Generic implements FileStore
     public function scanAll(): iterable
     {
         foreach ($this->dir->scanFiles() as $name => $file) {
-            $name = substr($name, strlen($this->prefix), -strlen(self::EXTENSION));
+            $name = substr($name, strlen($this->prefix), -strlen(self::Extension));
             yield $name => $file;
         }
     }
@@ -250,7 +250,7 @@ class Generic implements FileStore
     public function scanKeys(): iterable
     {
         foreach ($this->dir->scanFiles() as $name => $file) {
-            yield substr($name, strlen($this->prefix), -strlen(self::EXTENSION));
+            yield substr($name, strlen($this->prefix), -strlen(self::Extension));
         }
     }
 
@@ -375,7 +375,7 @@ class Generic implements FileStore
         $output = 0;
 
         foreach ($this->dir->scanFiles() as $name => $file) {
-            $name = substr($name, strlen($this->prefix), -strlen(self::EXTENSION));
+            $name = substr($name, strlen($this->prefix), -strlen(self::Extension));
 
             if (preg_match($pattern, $name)) {
                 $output++;
@@ -464,7 +464,7 @@ class Generic implements FileStore
     protected function createKey(
         string $key
     ): string {
-        return $this->prefix . $this->normalizeKey($key) . self::EXTENSION;
+        return $this->prefix . $this->normalizeKey($key) . self::Extension;
     }
 
     /**

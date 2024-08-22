@@ -22,7 +22,7 @@ use Stringable;
  */
 class Item implements CacheItem
 {
-    public const LOCK_TTL = 30;
+    public const LockTTL = 30;
 
     protected string $key;
 
@@ -441,7 +441,7 @@ class Item implements CacheItem
             $date->add(Coercion::toDateInterval($ttl));
             $expires = $date->getTimestamp();
         } else {
-            $expires = time() + static::LOCK_TTL;
+            $expires = time() + static::LockTTL;
         }
 
         return $this->store->getDriver()->storeLock(

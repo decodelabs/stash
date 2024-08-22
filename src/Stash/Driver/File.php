@@ -21,8 +21,8 @@ class File implements Driver
 {
     use KeyGenTrait;
 
-    public const KEY_SEPARATOR = '/';
-    public const EXTENSION = '.cache';
+    protected const KeySeparator = '/';
+    protected const Extension = '.cache';
 
     protected Dir $dir;
     protected int $dirPerms = 0770;
@@ -233,7 +233,7 @@ class File implements Driver
         }
 
         if ($key['self']) {
-            $this->dir->deleteFile($root . static::EXTENSION);
+            $this->dir->deleteFile($root . static::Extension);
         }
 
         return true;
@@ -316,7 +316,7 @@ class File implements Driver
         string $key
     ): FileInterface {
         $key = $this->createKey($namespace, $key);
-        $key = $this->hashKey($key) . static::EXTENSION;
+        $key = $this->hashKey($key) . static::Extension;
         return $this->dir->getFile($key);
     }
 
@@ -339,7 +339,7 @@ class File implements Driver
         string $key
     ): string {
         $key = trim($key, '/');
-        $parts = explode(static::KEY_SEPARATOR, $key);
+        $parts = explode(static::KeySeparator, $key);
 
         foreach ((array)$parts as &$part) {
             if ($part !== '') {
@@ -347,7 +347,7 @@ class File implements Driver
             }
         }
 
-        return implode(static::KEY_SEPARATOR, $parts);
+        return implode(static::KeySeparator, $parts);
     }
 
 
@@ -388,6 +388,6 @@ class File implements Driver
      */
     protected function getKeySeparator(): string
     {
-        return static::KEY_SEPARATOR;
+        return static::KeySeparator;
     }
 }
