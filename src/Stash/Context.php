@@ -31,7 +31,7 @@ use Throwable;
 
 class Context
 {
-    public const DRIVERS = [
+    protected const Drivers = [
         'Memcache', 'Redis', 'Apcu', 'Predis', 'PhpFile', 'PhpArray'
     ];
 
@@ -150,7 +150,7 @@ class Context
     public function loadDriverFor(
         string $namespace
     ): Driver {
-        $drivers = self::DRIVERS;
+        $drivers = self::Drivers;
 
         if (null !== ($driverName = $this->getConfig()?->getDriverFor($namespace))) {
             array_unshift($drivers, $driverName);

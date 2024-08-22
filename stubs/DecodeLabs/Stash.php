@@ -19,9 +19,8 @@ class Stash implements Proxy
 {
     use ProxyTrait;
 
-    const VENEER = 'DecodeLabs\\Stash';
-    const VENEER_TARGET = Inst::class;
-    const DRIVERS = Inst::DRIVERS;
+    const Veneer = 'DecodeLabs\\Stash';
+    const VeneerTarget = Inst::class;
 
     public static Inst $instance;
 
