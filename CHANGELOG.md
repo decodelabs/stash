@@ -1,3 +1,6 @@
+## v0.5.9 (2025-02-07)
+* Fixed implicit nullable arguments
+
 ## v0.5.8 (2024-08-21)
 * Converted consts to protected PascalCase
 * Updated Veneer dependency and Stub

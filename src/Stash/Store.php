@@ -196,7 +196,7 @@ interface Store extends
      * @return $this
      */
     public function pileUpPreempt(
-        int $time = null
+        ?int $time = null
     ): static;
 
     /**
@@ -205,8 +205,8 @@ interface Store extends
      * @return $this
      */
     public function pileUpSleep(
-        int $time = null,
-        int $attempts = null
+        ?int $time = null,
+        ?int $attempts = null
     ): static;
 
     /**

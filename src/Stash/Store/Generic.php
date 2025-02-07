@@ -532,7 +532,7 @@ class Generic implements Store
      * Set pile up policy to preempt
      */
     public function pileUpPreempt(
-        int $preemptTime = null
+        ?int $preemptTime = null
     ): static {
         $this->pileUpPolicy = PileUpPolicy::Preempt;
 
@@ -547,8 +547,8 @@ class Generic implements Store
      * Set pile up policy to sleep
      */
     public function pileUpSleep(
-        int $time = null,
-        int $attempts = null
+        ?int $time = null,
+        ?int $attempts = null
     ): static {
         $this->pileUpPolicy = PileUpPolicy::Sleep;
 
