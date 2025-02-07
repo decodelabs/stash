@@ -266,7 +266,7 @@ class Item implements CacheItem
      * @return $this
      */
     public function pileUpPreempt(
-        int $time = null
+        ?int $time = null
     ): static {
         $this->pileUpPolicy = PileUpPolicy::Preempt;
 
@@ -285,8 +285,8 @@ class Item implements CacheItem
      * @return $this
      */
     public function pileUpSleep(
-        int $time = null,
-        int $attempts = null
+        ?int $time = null,
+        ?int $attempts = null
     ): static {
         $this->pileUpPolicy = PileUpPolicy::Sleep;
 

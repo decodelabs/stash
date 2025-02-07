@@ -66,7 +66,7 @@ class Predis implements Driver
         if ($ttl > 0) {
             return 'OK' === $this->client->setex($key, $ttl, $data)->getPayload();
         } else {
-            return 'OK' === $this->client->set($key, $data)->getPayload();
+            return 'OK' === $this->client->set($key, $data)?->getPayload();
         }
     }
 
