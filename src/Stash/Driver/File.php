@@ -21,12 +21,13 @@ class File implements Driver
 {
     use KeyGenTrait;
 
-    protected const KeySeparator = '/';
-    protected const Extension = '.cache';
+    /** @var non-empty-string KeySeparator */
+    protected const string KeySeparator = '/';
+    protected const string Extension = '.cache';
 
     protected Dir $dir;
-    protected int $dirPerms = 0770;
-    protected int $filePerms = 0660;
+    public int $dirPermissions = 0770;
+    public int $filePermissions = 0660;
 
     /**
      * Can this be loaded?
@@ -64,55 +65,13 @@ class File implements Driver
 
         // Permissions
         if (isset($settings['dirPermissions'])) {
-            $this->setDirPermissions(Coercion::toInt($settings['dirPermissions']));
+            $this->dirPermissions = Coercion::toInt($settings['dirPermissions']);
         }
 
         if (isset($settings['filePermissions'])) {
-            $this->setFilePermissions(Coercion::toInt($settings['filePermissions']));
+            $this->filePermissions = Coercion::toInt($settings['filePermissions']);
         }
     }
-
-    /**
-     * Set default dir perms
-     *
-     * @return $this
-     */
-    public function setDirPermissions(
-        int $perms
-    ): static {
-        $this->dirPerms = $perms;
-        return $this;
-    }
-
-    /**
-     * Get default dir perms
-     */
-    public function getDirPermissions(): int
-    {
-        return $this->dirPerms;
-    }
-
-    /**
-     * Set default file perms
-     *
-     * @return $this
-     */
-    public function setFilePermissions(
-        int $perms
-    ): static {
-        $this->filePerms = $perms;
-        return $this;
-    }
-
-    /**
-     * Get default file perms
-     */
-    public function getFilePermissions(): int
-    {
-        return $this->filePerms;
-    }
-
-
 
 
     /**
@@ -125,14 +84,14 @@ class File implements Driver
         int $created,
         ?int $expires
     ): bool {
-        $this->dir->ensureExists($this->dirPerms);
+        $this->dir->ensureExists($this->dirPermissions);
         $file = $this->getFile($namespace, $key);
         $data = $this->buildFileContent($file, $namespace, $key, $value, $created, $expires);
 
         try {
             $file->putContents($data);
             $output = true;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $output = false;
         }
 
@@ -266,7 +225,7 @@ class File implements Driver
         try {
             $file->putContents($expires);
             return true;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return false;
         }
     }
@@ -287,11 +246,11 @@ class File implements Driver
 
         $expires = $file->getContents();
 
-        if ($expires !== null) {
-            $expires = (int)$expires;
+        if (empty($expires)) {
+            return null;
         }
 
-        return $expires;
+        return  (int)$expires;
     }
 
     /**
@@ -357,7 +316,9 @@ class File implements Driver
     public function count(
         string $namespace
     ): int {
-        return $this->dir->getDir($this->prefix . '/' . $namespace)->countFiles();
+        /** @var int<0,max> */
+        $output = $this->dir->getDir($this->prefix . '/' . $namespace)->countFiles();
+        return $output;
     }
 
     public function getKeys(

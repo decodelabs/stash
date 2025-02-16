@@ -11,14 +11,12 @@ namespace DecodeLabs\Stash\Store;
 
 use Closure;
 use DateInterval;
-
 use DecodeLabs\Coercion;
 use DecodeLabs\Exceptional;
 use DecodeLabs\Stash\Driver;
 use DecodeLabs\Stash\Item;
 use DecodeLabs\Stash\PileUpPolicy;
 use DecodeLabs\Stash\Store;
-
 use Psr\Cache\CacheItemInterface as CacheItem;
 use Psr\Cache\InvalidArgumentException as CacheInvalidArgumentException;
 use Throwable;
@@ -32,7 +30,7 @@ class Generic implements Store
     protected string $namespace;
 
     /**
-     * @var array<string, Item<T>>
+     * @var array<string,Item<T>>
      */
     protected array $deferred = [];
 
@@ -300,10 +298,7 @@ class Generic implements Store
     ): mixed {
         $item = $this->getItem($key);
 
-        if (
-            $item instanceof Item &&
-            $item->isMiss()
-        ) {
+        if ($item->isMiss()) {
             $item->lock();
 
             try {
@@ -360,10 +355,15 @@ class Generic implements Store
             foreach ($items as $key => $item) {
                 $item->set($values[$key]);
                 $item->expiresAfter($ttl);
-                $success = $success && $this->saveDeferred($item);
+
+                $success =
+                    $success &&
+                    $this->saveDeferred($item);
             }
 
-            return $success && $this->commit();
+            return
+                $success &&
+                $this->commit();
         });
     }
 
@@ -658,18 +658,18 @@ class Generic implements Store
         string $key
     ): string {
         if (!strlen($key)) {
+            // @phpstan-ignore-next-line
             throw Exceptional::{'InvalidArgument,Psr\\Cache\\InvalidArgumentException'}(
-                'Cache key must be a non-empty string',
-                null,
-                $key
+                message: 'Cache key must be a non-empty string',
+                data: $key
             );
         }
 
         if (preg_match('|[\{\}\(\)/\\\@\:]|', $key)) {
+            // @phpstan-ignore-next-line
             throw Exceptional::{'InvalidArgument,Psr\\Cache\\InvalidArgumentException'}(
-                'Cache key must not contain reserved extension characters: {}()/\@:',
-                null,
-                $key
+                message: 'Cache key must not contain reserved extension characters: {}()/\@:',
+                data: $key
             );
         }
 
@@ -686,10 +686,10 @@ class Generic implements Store
         CacheItem $item
     ): Item {
         if (!$item instanceof Item) {
+            // @phpstan-ignore-next-line
             throw Exceptional::{'InvalidArgument,Psr\\Cache\\InvalidArgumentException'}(
-                'Cache items must implement ' . Item::class,
-                null,
-                $item
+                message: 'Cache items must implement ' . Item::class,
+                data: $item
             );
         }
 
@@ -710,9 +710,10 @@ class Generic implements Store
         try {
             return $func();
         } catch (CacheInvalidArgumentException $e) {
+            // @phpstan-ignore-next-line
             throw Exceptional::{'InvalidArgument,Psr\\SimpleCache\\InvalidArgumentException'}(
-                $e->getMessage(),
-                ['previous' => $e]
+                message: $e->getMessage(),
+                previous: $e
             );
         }
     }

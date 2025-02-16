@@ -175,6 +175,8 @@ class Memcache implements Driver
         string $namespace,
     ): int {
         $output = 0;
+
+        /** @var array<string>|null */
         $keys = $this->client->getAllKeys();
 
         if (!is_iterable($keys)) {
@@ -193,10 +195,12 @@ class Memcache implements Driver
     /**
      * Get key
      */
-    public function getKeys(string $namespace): array
-    {
+    public function getKeys(
+        string $namespace
+    ): array {
         $output = [];
-        $length = strlen((string)$this->prefix);
+
+        /** @var array<string>|null */
         $keys = $this->client->getAllKeys();
 
         if (!is_iterable($keys)) {

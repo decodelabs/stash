@@ -184,9 +184,12 @@ class Predis implements Driver
     /**
      * Get key
      */
-    public function getKeys(string $namespace): array
-    {
-        return $this->client->keys($this->prefix . ':*');
+    public function getKeys(
+        string $namespace
+    ): array {
+        /** @var array<string> */
+        $output = $this->client->keys($this->prefix . ':*');
+        return $output;
     }
 
 

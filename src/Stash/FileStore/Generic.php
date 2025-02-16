@@ -30,11 +30,11 @@ class Generic implements FileStore
     protected string $namespace;
 
     protected Dir $dir;
-    protected int $dirPerms = 0770;
-    protected int $filePerms = 0660;
+    public int $dirPermissions = 0770;
+    public int $filePermissions = 0660;
 
     /**
-     * @param array<string, mixed> $settings
+     * @param array<string,mixed> $settings
      */
     public function __construct(
         string $namespace,
@@ -59,58 +59,13 @@ class Generic implements FileStore
 
         // Permissions
         if (isset($settings['dirPermissions'])) {
-            $this->setDirPermissions(Coercion::toInt($settings['dirPermissions']));
+            $this->dirPermissions = Coercion::toInt($settings['dirPermissions']);
         }
 
         if (isset($settings['filePermissions'])) {
-            $this->setFilePermissions(Coercion::toInt($settings['filePermissions']));
+            $this->filePermissions = Coercion::toInt($settings['filePermissions']);
         }
     }
-
-
-
-    /**
-     * Set default dir perms
-     *
-     * @return $this
-     */
-    public function setDirPermissions(
-        int $perms
-    ): static {
-        $this->dirPerms = $perms;
-        return $this;
-    }
-
-    /**
-     * Get default dir perms
-     */
-    public function getDirPermissions(): int
-    {
-        return $this->dirPerms;
-    }
-
-    /**
-     * Set default file perms
-     *
-     * @return $this
-     */
-    public function setFilePermissions(
-        int $perms
-    ): static {
-        $this->filePerms = $perms;
-        return $this;
-    }
-
-    /**
-     * Get default file perms
-     */
-    public function getFilePermissions(): int
-    {
-        return $this->filePerms;
-    }
-
-
-
 
     /**
      * Set file
@@ -121,7 +76,7 @@ class Generic implements FileStore
         string $key,
         string|File $file
     ): bool {
-        $this->dir->ensureExists($this->dirPerms);
+        $this->dir->ensureExists($this->dirPermissions);
         $file = $this->normalizeFile($file);
         $target = $this->getFile($key);
 
@@ -395,7 +350,9 @@ class Generic implements FileStore
 
     public function count(): int
     {
-        return $this->dir->countFiles();
+        /** @var int<0,max> */
+        $output = $this->dir->countFiles();
+        return $output;
     }
 
 

@@ -27,7 +27,7 @@ trait KeyGenTrait
     /**
      * Generate list of keys to delete
      *
-     * @return array<string, mixed>
+     * @return array<string,mixed>
      * @phpstan-return array{'normal': ?string, 'children': bool, 'self': bool}
      */
     protected function parseKey(
@@ -67,9 +67,8 @@ trait KeyGenTrait
 
         if ($man['children']) {
             throw Exceptional::InvalidArgument(
-                'Invalid cache key',
-                null,
-                $key
+                message: 'Invalid cache key',
+                data: $key
             );
         }
 
@@ -102,7 +101,10 @@ trait KeyGenTrait
         $output = $this->buildKey($namespace, $man['normal']);
         $output = '/^' . preg_quote($output);
 
-        if ($man['self'] && $man['children']) {
+        if (
+            $man['self'] &&
+            $man['children']
+        ) {
             $output .= '.*';
         } elseif ($man['children']) {
             $output .= '.+';

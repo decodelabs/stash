@@ -14,12 +14,12 @@ trait IndexedKeyGenTrait
     use KeyGenTrait;
 
     /**
-     * @var array<string, int>
+     * @var array<string,int>
      */
-    protected array $keyCache = [];
+    private array $keyCache = [];
 
-    protected float $keyCacheTime = 0;
-    protected float $keyCacheTimeLimit = 1;
+    private float $keyCacheTime = 0;
+    private float $keyCacheTimeLimit = 1;
 
     /**
      * Create path key
