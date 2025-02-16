@@ -14,7 +14,7 @@ interface Driver
     public static function isAvailable(): bool;
 
     /**
-     * @param array<string, mixed> $settings
+     * @param array<string,mixed> $settings
      */
     public function __construct(
         array $settings
@@ -63,6 +63,9 @@ interface Driver
     ): bool;
 
 
+    /**
+     * @return int<0,max>
+     */
     public function count(
         string $namespace
     ): int;

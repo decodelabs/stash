@@ -31,12 +31,15 @@ use Throwable;
 
 class Context
 {
-    protected const Drivers = [
+    /**
+     * @var list<string>
+     */
+    protected const array Drivers = [
         'Memcache', 'Redis', 'Apcu', 'Predis', 'PhpFile', 'PhpArray'
     ];
 
     /**
-     * @var array<string, Store<mixed>>
+     * @var array<string,Store<mixed>>
      */
     protected array $caches = [];
 
@@ -170,7 +173,7 @@ class Context
         }
 
         throw Exceptional::ComponentUnavailable(
-            'No cache drivers available for namespace: ' . $namespace
+            message: 'No cache drivers available for namespace: ' . $namespace
         );
     }
 
@@ -349,4 +352,7 @@ class Context
 
 
 // Veneer
-Veneer::register(Context::class, Stash::class);
+Veneer\Manager::getGlobalManager()->register(
+    Context::class,
+    Stash::class
+);

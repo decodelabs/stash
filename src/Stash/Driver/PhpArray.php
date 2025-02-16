@@ -17,13 +17,13 @@ class PhpArray implements Driver
     use KeyGenTrait;
 
     /**
-     * @var array<string, array<mixed>>
-     * @phpstan-var array<string, array{0: mixed, 1: ?int}>
+     * @var array<string,array<mixed>>
+     * @phpstan-var array<string,array{0: mixed, 1: ?int}>
      */
     protected array $values = [];
 
     /**
-     * @var array<string, array<string, int>>
+     * @var array<string,array<string,int>>
      */
     protected array $locks = [];
 
@@ -161,8 +161,9 @@ class PhpArray implements Driver
     /**
      * Get keys
      */
-    public function getKeys(string $namespace): array
-    {
+    public function getKeys(
+        string $namespace
+    ): array {
         $output = [];
         $prefix = $this->prefix . $this->getKeySeparator() . $namespace . $this->getKeySeparator();
 

@@ -22,44 +22,44 @@ use Stringable;
  */
 class Item implements CacheItem
 {
-    public const LockTTL = 30;
+    public const int LockTTL = 30;
 
-    protected string $key;
+    protected(set) string $key;
 
     /**
      * @var ?T
      */
-    protected mixed $value;
+    protected(set) mixed $value;
 
-    protected bool $isHit = false;
+    protected(set) bool $hit = false;
     protected bool $fetched = false;
 
-    protected ?Carbon $expiration = null;
-    protected bool $locked = false;
+    protected(set) ?Carbon $expiration = null;
+    protected(set) bool $locked = false;
 
-    protected ?PileUpPolicy $pileUpPolicy = null;
-
-    /**
-     * @phpstan-var positive-int|null
-     */
-    protected ?int $preemptTime = null;
+    protected(set) ?PileUpPolicy $pileUpPolicy = null;
 
     /**
      * @phpstan-var positive-int|null
      */
-    protected ?int $sleepTime = null;
+    protected(set) ?int $preemptTime = null;
 
     /**
      * @phpstan-var positive-int|null
      */
-    protected ?int $sleepAttempts = null;
+    protected(set) ?int $sleepTime = null;
 
-    protected mixed $fallbackValue = null;
+    /**
+     * @phpstan-var positive-int|null
+     */
+    protected(set) ?int $sleepAttempts = null;
+
+    protected(set) mixed $fallbackValue = null;
 
     /**
      * @var Store<T>
      */
-    protected Store $store;
+    protected(set) Store $store;
 
     /**
      * Init with store and key
@@ -74,15 +74,6 @@ class Item implements CacheItem
         $this->store = $store;
     }
 
-    /**
-     * Get parent store
-     *
-     * @return Store<T>
-     */
-    public function getStore(): Store
-    {
-        return $this->store;
-    }
 
     /**
      * Returns the key for the current cache item.
@@ -102,7 +93,7 @@ class Item implements CacheItem
         mixed $value
     ): static {
         $this->value = $value;
-        $this->isHit = true;
+        $this->hit = true;
         $this->fetched = true;
         return $this;
     }
@@ -128,7 +119,7 @@ class Item implements CacheItem
     {
         $this->ensureFetched();
 
-        if (!$this->isHit) {
+        if (!$this->hit) {
             return false;
         }
 
@@ -188,7 +179,7 @@ class Item implements CacheItem
     /**
      * Work out best expiration from value
      *
-     * @return $this;
+     * @return $this
      */
     public function setExpiration(
         DateTimeInterface|DateInterval|string|int|null $expiration
@@ -201,9 +192,11 @@ class Item implements CacheItem
                 $expiration < time() / 10
             )
         ) {
-            return $this->expiresAfter($expiration);
+            $this->expiresAfter($expiration);
+            return $this;
         } else {
-            return $this->expiresAt($expiration);
+            $this->expiresAt($expiration);
+            return $this;
         }
     }
 
@@ -564,7 +557,7 @@ class Item implements CacheItem
 
         if ($output) {
             $this->value = null;
-            $this->isHit = false;
+            $this->hit = false;
         }
 
         return $output;
@@ -589,10 +582,10 @@ class Item implements CacheItem
         );
 
         if (!$res) {
-            $this->isHit = false;
+            $this->hit = false;
             $this->value = null;
         } else {
-            $this->isHit = true;
+            $this->hit = true;
             $this->value = $res[0];
 
             if ($res[1] === null) {
@@ -605,7 +598,7 @@ class Item implements CacheItem
                 $this->expiration &&
                 $this->expiration->getTimestamp() < $time
             ) {
-                $this->isHit = false;
+                $this->hit = false;
                 $this->value = null;
 
                 $driver->delete(
@@ -624,7 +617,7 @@ class Item implements CacheItem
 
         $ttl = $this->expiration ? $this->expiration->getTimestamp() - $time : null;
 
-        if ($this->isHit) {
+        if ($this->hit) {
             if (
                 $policy === PileUpPolicy::Preempt &&
                 $ttl > 0 &&
@@ -640,7 +633,7 @@ class Item implements CacheItem
                 }
 
                 if (!$lockExp) {
-                    $this->isHit = false;
+                    $this->hit = false;
                     $this->value = null;
                 }
             }
@@ -668,7 +661,7 @@ class Item implements CacheItem
                 case PileUpPolicy::Value:
                     if ($this->fallbackValue !== null) {
                         $this->value = $this->fallbackValue;
-                        $this->isHit = true;
+                        $this->hit = true;
                         return;
                     }
 
@@ -688,7 +681,7 @@ class Item implements CacheItem
                         );
 
                         if ($res) {
-                            $this->isHit = true;
+                            $this->hit = true;
                             $this->value = $res[0];
 
                             if ($res[1] === null) {
@@ -700,7 +693,7 @@ class Item implements CacheItem
                         }
                     }
 
-                    $this->isHit = false;
+                    $this->hit = false;
                     $this->value = null;
 
                     break;

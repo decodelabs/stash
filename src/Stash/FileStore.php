@@ -24,33 +24,8 @@ interface FileStore extends
     ArrayAccess,
     Countable
 {
-    /**
-     * Set default dir perms
-     *
-     * @return $this
-     */
-    public function setDirPermissions(
-        int $perms
-    ): static;
-
-    /**
-     * Get default dir perms
-     */
-    public function getDirPermissions(): int;
-
-    /**
-     * Set default file perms
-     *
-     * @return $this
-     */
-    public function setFilePermissions(
-        int $perms
-    ): static;
-
-    /**
-     * Get default file perms
-     */
-    public function getFilePermissions(): int;
+    public int $dirPermissions { get; set; }
+    public int $filePermissions { get; set; }
 
 
 

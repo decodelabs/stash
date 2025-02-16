@@ -39,14 +39,14 @@ class Stash implements Config, ConfigInterface
         string $namespace
     ): ?string {
         return
-            $this->data->stores->{$namespace}->driver->as('?string') ??
+            $this->data->stores->__get($namespace)->driver->as('?string') ??
             $this->data->stores->default->driver->as('?string');
     }
 
     public function isDriverEnabled(
         string $driver
     ): bool {
-        return $this->data->drivers->{$driver}->enabled->as('bool', [
+        return $this->data->drivers->__get($driver)->enabled->as('bool', [
             'default' => true
         ]);
     }
@@ -61,64 +61,78 @@ class Stash implements Config, ConfigInterface
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<string,mixed>
      */
     public function getDriverSettings(
         string $driver
     ): ?array {
-        return $this->data->drivers->{$driver}->toArray();
+        /** @var array<string,mixed> */
+        $output = $this->data->drivers->__get($driver)->toArray();
+        return $output;
     }
 
     public function getPileUpPolicy(
         string $namespace
     ): ?PileUpPolicy {
         return PileUpPolicy::tryFrom(
-            $this->data->stores->{$namespace}->pileUpPolicy->as('?string') ??
+            $this->data->stores->__get($namespace)->pileUpPolicy->as('?string') ??
             $this->data->stores->default->pileUpPolicy->as('?string') ?? ''
         );
     }
 
     /**
-     * @return positive-int|null
+     * @return ?positive-int
      */
     public function getPreemptTime(
         string $namespace
     ): ?int {
-        return
-            $this->data->stores->{$namespace}->preemptTime->as('?int') ??
+        /** @var ?positive-int */
+        $output =
+            $this->data->stores->__get($namespace)->preemptTime->as('?int') ??
             $this->data->stores->default->preemptTime->as('?int');
+
+        return $output;
     }
 
     /**
-     * @return positive-int|null
+     * @return ?positive-int
      */
     public function getSleepTime(
         string $namespace
     ): ?int {
-        return
-            $this->data->stores->{$namespace}->sleepTime->as('?int') ??
+        /** @var ?positive-int */
+        $output =
+            $this->data->stores->__get($namespace)->sleepTime->as('?int') ??
             $this->data->stores->default->sleepTime->as('?int');
+
+        return $output;
     }
 
     /**
-     * @return positive-int|null
+     * @return ?positive-int
      */
     public function getSleepAttempts(
         string $namespace
     ): ?int {
-        return
-            $this->data->stores->{$namespace}->sleepAttempts->as('?int') ??
+        /** @var ?positive-int */
+        $output =
+            $this->data->stores->__get($namespace)->sleepAttempts->as('?int') ??
             $this->data->stores->default->sleepAttempts->as('?int');
+
+        return $output;
     }
 
 
     public function getFileStoreSettings(
         string $namespace
     ): array {
-        return array_merge(
+        /** @var array<string,mixed> */
+        $output = array_merge(
             $this->data->fileStores->default->toArray(),
-            $this->data->fileStores->{$namespace}->toArray()
+            $this->data->fileStores->__get($namespace)->toArray()
         );
+
+        return $output;
     }
 
     public function getAllFileStoreSettings(): array

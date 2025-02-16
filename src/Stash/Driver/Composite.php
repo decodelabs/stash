@@ -57,7 +57,9 @@ class Composite implements Driver
         $output = true;
 
         foreach (array_reverse($this->drivers) as $driver) {
-            $output = $output && $driver->store($namespace, $key, $value, $created, $expires);
+            $output =
+                $output &&
+                $driver->store($namespace, $key, $value, $created, $expires);
         }
 
         return $output;
@@ -91,7 +93,9 @@ class Composite implements Driver
         $output = true;
 
         foreach (array_reverse($this->drivers) as $driver) {
-            $output = $output && $driver->delete($namespace, $key);
+            $output =
+                $output &&
+                $driver->delete($namespace, $key);
         }
 
         return $output;
@@ -106,7 +110,9 @@ class Composite implements Driver
         $output = true;
 
         foreach (array_reverse($this->drivers) as $driver) {
-            $output = $output && $driver->clearAll($namespace);
+            $output =
+                $output &&
+                $driver->clearAll($namespace);
         }
 
         return $output;
@@ -125,7 +131,9 @@ class Composite implements Driver
         $output = true;
 
         foreach (array_reverse($this->drivers) as $driver) {
-            $output = $output && $driver->storeLock($namespace, $key, $expires);
+            $output =
+                $output &&
+                $driver->storeLock($namespace, $key, $expires);
         }
 
         return $output;
@@ -159,7 +167,9 @@ class Composite implements Driver
         $output = true;
 
         foreach (array_reverse($this->drivers) as $driver) {
-            $output = $output && $driver->deleteLock($namespace, $key);
+            $output =
+                $output &&
+                $driver->deleteLock($namespace, $key);
         }
 
         return $output;
