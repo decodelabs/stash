@@ -13,7 +13,7 @@
 
         "decodelabs/archetype": "^0.3.8",
         "decodelabs/atlas": "^0.12.3",
-        "decodelabs/coercion": "^0.2.15",
+        "decodelabs/coercion": "^0.3",
         "decodelabs/dictum": "^0.6.9",
         "decodelabs/exceptional": "^0.5.3",
         "decodelabs/glitch-support": "^0.5.1",
@@ -25,7 +25,7 @@
     },
     "require-dev": {
         "decodelabs/dovetail": "^0.2.9",
-        "decodelabs/genesis": "^0.10",
+        "decodelabs/genesis": "^0.11",
         "decodelabs/phpstan-decodelabs": "^0.7",
 
         "ext-memcached": "^3.2",

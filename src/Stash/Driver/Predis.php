@@ -37,7 +37,7 @@ class Predis implements Driver
         array $settings
     ) {
         $this->generatePrefix(
-            Coercion::toStringOrNull($settings['prefix'] ?? null)
+            Coercion::tryString($settings['prefix'] ?? null)
         );
 
         $this->client = new Client($settings);
@@ -157,7 +157,7 @@ class Predis implements Driver
     ): ?int {
         $key = $this->createLockKey($namespace, $key);
         $output = $this->client->get($key);
-        return Coercion::toIntOrNull($output);
+        return Coercion::tryInt($output);
     }
 
     /**

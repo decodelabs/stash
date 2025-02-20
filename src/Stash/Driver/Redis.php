@@ -36,12 +36,12 @@ class Redis implements Driver
         array $settings
     ) {
         $this->generatePrefix(
-            Coercion::toStringOrNull($settings['prefix'] ?? null)
+            Coercion::tryString($settings['prefix'] ?? null)
         );
 
-        $host = Coercion::toStringOrNull($settings['host'] ?? null) ?? '127.0.0.1';
-        $port = Coercion::toIntOrNull($settings['port'] ?? null) ?? 6379;
-        $timeout = Coercion::toFloatOrNull($settings['timeout'] ?? null) ?? 0;
+        $host = Coercion::tryString($settings['host'] ?? null) ?? '127.0.0.1';
+        $port = Coercion::tryInt($settings['port'] ?? null) ?? 6379;
+        $timeout = Coercion::tryFloat($settings['timeout'] ?? null) ?? 0;
 
         $client = new Client();
         $client->connect($host, $port, $timeout);
@@ -174,7 +174,7 @@ class Redis implements Driver
     ): ?int {
         $key = $this->createLockKey($namespace, $key);
         $output = $this->client->get($key);
-        return Coercion::toIntOrNull($output);
+        return Coercion::tryInt($output);
     }
 
     /**
@@ -213,7 +213,7 @@ class Redis implements Driver
     protected function getPathIndex(
         string $pathKey
     ): int {
-        return Coercion::toInt($this->client->get($pathKey));
+        return Coercion::asInt($this->client->get($pathKey));
     }
 
 

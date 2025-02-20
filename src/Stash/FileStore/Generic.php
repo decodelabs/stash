@@ -41,13 +41,13 @@ class Generic implements FileStore
         array $settings = []
     ) {
         $this->namespace = $namespace;
-        $this->prefix = Coercion::toString($settings['prefix'] ?? $this->prefix);
+        $this->prefix = Coercion::asString($settings['prefix'] ?? $this->prefix);
 
 
         // Path
-        if (null === ($path = Coercion::toStringOrNull($settings['path'] ?? null))) {
+        if (null === ($path = Coercion::tryString($settings['path'] ?? null))) {
             if (class_exists(Genesis::class)) {
-                $basePath = Genesis::$hub->getLocalDataPath();
+                $basePath = Genesis::$hub->localDataPath;
             } else {
                 $basePath = getcwd();
             }
@@ -59,11 +59,11 @@ class Generic implements FileStore
 
         // Permissions
         if (isset($settings['dirPermissions'])) {
-            $this->dirPermissions = Coercion::toInt($settings['dirPermissions']);
+            $this->dirPermissions = Coercion::asInt($settings['dirPermissions']);
         }
 
         if (isset($settings['filePermissions'])) {
-            $this->filePermissions = Coercion::toInt($settings['filePermissions']);
+            $this->filePermissions = Coercion::asInt($settings['filePermissions']);
         }
     }
 
@@ -148,7 +148,7 @@ class Generic implements FileStore
         DateInterval|string|Stringable|int $ttl
     ): iterable {
         $output = [];
-        $ttl = Coercion::toDateInterval($ttl);
+        $ttl = Coercion::asDateInterval($ttl);
 
         foreach ($this->dir->scanFiles() as $name => $file) {
             if (!$file->hasChangedIn($ttl)) {
@@ -219,7 +219,7 @@ class Generic implements FileStore
         }
 
         return Carbon::createFromTimestamp(
-            Coercion::toInt($file->getLastModified())
+            Coercion::asInt($file->getLastModified())
         );
     }
 
@@ -295,7 +295,7 @@ class Generic implements FileStore
         DateInterval|string|Stringable|int $ttl
     ): int {
         $output = 0;
-        $ttl = Coercion::toDateInterval($ttl);
+        $ttl = Coercion::asDateInterval($ttl);
 
         foreach ($this->dir->scanFiles() as $file) {
             if (!$file->hasChangedIn($ttl)) {
@@ -437,7 +437,7 @@ class Generic implements FileStore
         }
 
         if (!$file instanceof File) {
-            $file = Atlas::newMemoryFile()->putContents(Coercion::toString($file));
+            $file = Atlas::newMemoryFile()->putContents(Coercion::asString($file));
         }
 
         return $file;

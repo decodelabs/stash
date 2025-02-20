@@ -44,7 +44,7 @@ class PhpArray implements Driver
         array $settings
     ) {
         $this->generatePrefix(
-            Coercion::toStringOrNull($settings['prefix'] ?? null)
+            Coercion::tryString($settings['prefix'] ?? null)
         );
     }
 
