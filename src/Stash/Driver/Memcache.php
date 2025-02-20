@@ -35,7 +35,7 @@ class Memcache implements Driver
         array $settings
     ) {
         $this->generatePrefix(
-            Coercion::toStringOrNull($settings['prefix'] ?? null)
+            Coercion::tryString($settings['prefix'] ?? null)
         );
 
         $client = new Client();
@@ -43,8 +43,8 @@ class Memcache implements Driver
         if (is_array($settings['servers'] ?? null)) {
             $client->addServers($settings['servers']);
         } else {
-            $host = Coercion::toStringOrNull($settings['host'] ?? null) ?? '127.0.0.1';
-            $port = Coercion::toIntOrNull($settings['port'] ?? null) ?? 11211;
+            $host = Coercion::tryString($settings['host'] ?? null) ?? '127.0.0.1';
+            $port = Coercion::tryInt($settings['port'] ?? null) ?? 11211;
 
             $client->addServer($host, $port);
         }
@@ -223,7 +223,7 @@ class Memcache implements Driver
     protected function getPathIndex(
         string $pathKey
     ): int {
-        return Coercion::toIntOrNull($this->client->get($pathKey)) ?? 0;
+        return Coercion::tryInt($this->client->get($pathKey)) ?? 0;
     }
 
 

@@ -312,7 +312,7 @@ class Context
     {
         // Base
         if (class_exists(Genesis::class)) {
-            $basePath = Genesis::$hub->getLocalDataPath();
+            $basePath = Genesis::$hub->localDataPath;
         } else {
             $basePath = getcwd();
         }
@@ -338,7 +338,7 @@ class Context
                 continue;
             }
 
-            $dir = Atlas::dir(Coercion::toString($settings['path']));
+            $dir = Atlas::dir(Coercion::asString($settings['path']));
 
             if (
                 $dir->exists() &&

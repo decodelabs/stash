@@ -151,7 +151,7 @@ class Item implements CacheItem
             return $this;
         }
 
-        $this->expiration = Carbon::instance(Coercion::toDateTime($expiration));
+        $this->expiration = Carbon::instance(Coercion::asDateTime($expiration));
         return $this;
     }
 
@@ -169,7 +169,7 @@ class Item implements CacheItem
         }
 
         $date = new Carbon();
-        $date->add(Coercion::toDateInterval($time));
+        $date->add(Coercion::asDateInterval($time));
 
         $this->expiration = $date;
         return $this;
@@ -431,7 +431,7 @@ class Item implements CacheItem
 
         if ($ttl !== null) {
             $date = new Carbon();
-            $date->add(Coercion::toDateInterval($ttl));
+            $date->add(Coercion::asDateInterval($ttl));
             $expires = $date->getTimestamp();
         } else {
             $expires = time() + static::LockTTL;

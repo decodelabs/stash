@@ -45,14 +45,14 @@ class File implements Driver
         array $settings
     ) {
         $this->generatePrefix(
-            Coercion::toStringOrNull($settings['prefix'] ?? null)
+            Coercion::tryString($settings['prefix'] ?? null)
         );
 
 
         // Path
-        if (null === ($path = Coercion::toStringOrNull($settings['path'] ?? null))) {
+        if (null === ($path = Coercion::tryString($settings['path'] ?? null))) {
             if (class_exists(Genesis::class)) {
-                $basePath = Genesis::$hub->getLocalDataPath();
+                $basePath = Genesis::$hub->localDataPath;
             } else {
                 $basePath = getcwd();
             }
@@ -65,11 +65,11 @@ class File implements Driver
 
         // Permissions
         if (isset($settings['dirPermissions'])) {
-            $this->dirPermissions = Coercion::toInt($settings['dirPermissions']);
+            $this->dirPermissions = Coercion::asInt($settings['dirPermissions']);
         }
 
         if (isset($settings['filePermissions'])) {
-            $this->filePermissions = Coercion::toInt($settings['filePermissions']);
+            $this->filePermissions = Coercion::asInt($settings['filePermissions']);
         }
     }
 
