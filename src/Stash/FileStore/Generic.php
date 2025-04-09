@@ -18,6 +18,7 @@ use DecodeLabs\Atlas\File;
 use DecodeLabs\Coercion;
 use DecodeLabs\Dictum;
 use DecodeLabs\Genesis;
+use DecodeLabs\Monarch;
 use DecodeLabs\Stash\FileStore;
 use Stringable;
 use Throwable;
@@ -46,13 +47,7 @@ class Generic implements FileStore
 
         // Path
         if (null === ($path = Coercion::tryString($settings['path'] ?? null))) {
-            if (class_exists(Genesis::class)) {
-                $basePath = Genesis::$hub->localDataPath;
-            } else {
-                $basePath = getcwd();
-            }
-
-            $path = $basePath . '/stash/fileStore/' . $this->normalizeKey($namespace);
+            $path = Monarch::$paths->localData . '/stash/fileStore/' . $this->normalizeKey($namespace);
         }
 
         $this->dir = new Dir($path);

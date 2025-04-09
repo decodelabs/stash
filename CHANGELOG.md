@@ -1,3 +1,7 @@
+## v0.6.2 (2025-04-09)
+* Added Genesis build task
+* Replaced Genesis info with Monarch
+
 ## v0.6.1 (2025-02-20)
 * Upgraded Coercion dependency
 * Upgraded Genesis dependency
