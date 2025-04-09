@@ -18,7 +18,6 @@ use DecodeLabs\Coercion;
 use DecodeLabs\Dovetail;
 use DecodeLabs\Dovetail\Config\Stash as StashConfig;
 use DecodeLabs\Exceptional;
-use DecodeLabs\Genesis;
 use DecodeLabs\Glitch\Proxy as Glitch;
 use DecodeLabs\Monarch;
 use DecodeLabs\Stash;

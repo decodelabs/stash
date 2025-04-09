@@ -12,7 +12,6 @@ namespace DecodeLabs\Stash\Driver;
 use DecodeLabs\Atlas\Dir\Local as Dir;
 use DecodeLabs\Atlas\File as FileInterface;
 use DecodeLabs\Coercion;
-use DecodeLabs\Genesis;
 use DecodeLabs\Monarch;
 use DecodeLabs\Stash\Driver;
 use ReflectionClass;
