@@ -13,6 +13,7 @@ use DecodeLabs\Atlas\Dir\Local as Dir;
 use DecodeLabs\Atlas\File as FileInterface;
 use DecodeLabs\Coercion;
 use DecodeLabs\Genesis;
+use DecodeLabs\Monarch;
 use DecodeLabs\Stash\Driver;
 use ReflectionClass;
 use Throwable;
@@ -51,14 +52,8 @@ class File implements Driver
 
         // Path
         if (null === ($path = Coercion::tryString($settings['path'] ?? null))) {
-            if (class_exists(Genesis::class)) {
-                $basePath = Genesis::$hub->localDataPath;
-            } else {
-                $basePath = getcwd();
-            }
-
             $name = lcfirst((new ReflectionClass($this))->getShortName());
-            $path = $basePath . '/stash/cache@' . $name;
+            $path = Monarch::$paths->localData . '/stash/cache@' . $name;
         }
 
         $this->dir = new Dir($path);

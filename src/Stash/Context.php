@@ -20,6 +20,7 @@ use DecodeLabs\Dovetail\Config\Stash as StashConfig;
 use DecodeLabs\Exceptional;
 use DecodeLabs\Genesis;
 use DecodeLabs\Glitch\Proxy as Glitch;
+use DecodeLabs\Monarch;
 use DecodeLabs\Stash;
 use DecodeLabs\Stash\FileStore\Generic as GenericFileStore;
 use DecodeLabs\Stash\Store\Generic as GenericStore;
@@ -310,14 +311,10 @@ class Context
      */
     protected function scanFileStoreDirectories(): Generator
     {
-        // Base
-        if (class_exists(Genesis::class)) {
-            $basePath = Genesis::$hub->localDataPath;
-        } else {
-            $basePath = getcwd();
-        }
+        $dir = Atlas::dir(
+            Monarch::$paths->localData . '/stash/fileStore/'
+        );
 
-        $dir = Atlas::dir($basePath . '/stash/fileStore/');
         $dirs = [];
 
         if ($dir->exists()) {

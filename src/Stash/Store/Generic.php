@@ -658,7 +658,6 @@ class Generic implements Store
         string $key
     ): string {
         if (!strlen($key)) {
-            // @phpstan-ignore-next-line
             throw Exceptional::{'InvalidArgument,Psr\\Cache\\InvalidArgumentException'}(
                 message: 'Cache key must be a non-empty string',
                 data: $key
@@ -666,7 +665,6 @@ class Generic implements Store
         }
 
         if (preg_match('|[\{\}\(\)/\\\@\:]|', $key)) {
-            // @phpstan-ignore-next-line
             throw Exceptional::{'InvalidArgument,Psr\\Cache\\InvalidArgumentException'}(
                 message: 'Cache key must not contain reserved extension characters: {}()/\@:',
                 data: $key
@@ -686,7 +684,6 @@ class Generic implements Store
         CacheItem $item
     ): Item {
         if (!$item instanceof Item) {
-            // @phpstan-ignore-next-line
             throw Exceptional::{'InvalidArgument,Psr\\Cache\\InvalidArgumentException'}(
                 message: 'Cache items must implement ' . Item::class,
                 data: $item
@@ -710,7 +707,6 @@ class Generic implements Store
         try {
             return $func();
         } catch (CacheInvalidArgumentException $e) {
-            // @phpstan-ignore-next-line
             throw Exceptional::{'InvalidArgument,Psr\\SimpleCache\\InvalidArgumentException'}(
                 message: $e->getMessage(),
                 previous: $e
