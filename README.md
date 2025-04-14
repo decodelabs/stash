@@ -11,8 +11,6 @@
 
 Stash provides a PSR6 / PSR16 compatible cache system for PHP.
 
-_Get news and updates on the [DecodeLabs blog](https://blog.decodelabs.com)._
-
 ---
 
 ## Installation
