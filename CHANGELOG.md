@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added loadStealth() to avoid loading config in non-project context
 
 [Full list of changes](https://github.com/decodelabs/stash/compare/v0.6.2...v0.6.3)
+
 ---
 
 ## [v0.6.2](https://github.com/decodelabs/stash/commits/v0.6.2) - 9th April 2025
@@ -21,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replaced Genesis info with Monarch
 
 [Full list of changes](https://github.com/decodelabs/stash/compare/v0.6.1...v0.6.2)
+
 ---
 
 ## [v0.6.1](https://github.com/decodelabs/stash/commits/v0.6.1) - 20th February 2025
