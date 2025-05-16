@@ -148,6 +148,30 @@ class Context
     }
 
     /**
+     * Get cache store without loading config
+     *
+     * @return Store<mixed>
+     */
+    public function loadStealth(
+        string $namespace
+    ): Store {
+        if (isset($this->caches[$namespace])) {
+            return $this->caches[$namespace];
+        }
+
+        $driver = $this->loadDriverFor($namespace);
+
+        try {
+            $class = Archetype::resolve(Store::class, $namespace);
+        } catch (ArchetypeException $e) {
+            $class = GenericStore::class;
+        }
+
+        return new $class($namespace, $driver);
+    }
+
+
+    /**
      * Get driver for namespace
      */
     public function loadDriverFor(
