@@ -37,10 +37,13 @@ class Stash implements Proxy
     public static function load(string $namespace): Ref1 {
         return static::$_veneerInstance->load(...func_get_args());
     }
-    public static function loadDriverFor(string $namespace): Ref2 {
+    public static function loadStealth(string $namespace): Ref1 {
+        return static::$_veneerInstance->loadStealth(...func_get_args());
+    }
+    public static function loadDriverFor(string $namespace, bool $stealth = false): Ref2 {
         return static::$_veneerInstance->loadDriverFor(...func_get_args());
     }
-    public static function loadDriver(string $name): ?Ref2 {
+    public static function loadDriver(string $name, bool $stealth = false): ?Ref2 {
         return static::$_veneerInstance->loadDriver(...func_get_args());
     }
     public static function purge(): void {}

@@ -17,7 +17,6 @@ use DecodeLabs\Atlas\Dir\Local as Dir;
 use DecodeLabs\Atlas\File;
 use DecodeLabs\Coercion;
 use DecodeLabs\Dictum;
-use DecodeLabs\Genesis;
 use DecodeLabs\Monarch;
 use DecodeLabs\Stash\FileStore;
 use Stringable;

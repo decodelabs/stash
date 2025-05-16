@@ -18,7 +18,6 @@ use DecodeLabs\Coercion;
 use DecodeLabs\Dovetail;
 use DecodeLabs\Dovetail\Config\Stash as StashConfig;
 use DecodeLabs\Exceptional;
-use DecodeLabs\Genesis;
 use DecodeLabs\Glitch\Proxy as Glitch;
 use DecodeLabs\Monarch;
 use DecodeLabs\Stash;
@@ -149,20 +148,48 @@ class Context
     }
 
     /**
+     * Get cache store without loading config
+     *
+     * @return Store<mixed>
+     */
+    public function loadStealth(
+        string $namespace
+    ): Store {
+        if (isset($this->caches[$namespace])) {
+            return $this->caches[$namespace];
+        }
+
+        $driver = $this->loadDriverFor($namespace, stealth: true);
+
+        try {
+            $class = Archetype::resolve(Store::class, $namespace);
+        } catch (ArchetypeException $e) {
+            $class = GenericStore::class;
+        }
+
+        return new $class($namespace, $driver);
+    }
+
+
+    /**
      * Get driver for namespace
      */
     public function loadDriverFor(
-        string $namespace
+        string $namespace,
+        bool $stealth = false
     ): Driver {
         $drivers = self::Drivers;
 
-        if (null !== ($driverName = $this->getConfig()?->getDriverFor($namespace))) {
+        if (
+            !$stealth &&
+            (null !== ($driverName = $this->getConfig()?->getDriverFor($namespace)))
+        ) {
             array_unshift($drivers, $driverName);
         }
 
         foreach ($drivers as $name) {
             try {
-                if ($driver = $this->loadDriver($name)) {
+                if ($driver = $this->loadDriver($name, $stealth)) {
                     return $driver;
                 }
             } catch (ArchetypeException $e) {
@@ -182,19 +209,29 @@ class Context
      * Load driver by name
      */
     public function loadDriver(
-        string $name
+        string $name,
+        bool $stealth = false
     ): ?Driver {
         $class = Archetype::resolve(Driver::class, $name);
-        $config = $this->getConfig();
 
-        if (
-            !$class::isAvailable() ||
-            !($config?->isDriverEnabled($name) ?? true)
-        ) {
-            return null;
+        if(!$stealth) {
+            $config = $this->getConfig();
+
+            if (
+                !$class::isAvailable() ||
+                !($config?->isDriverEnabled($name) ?? true)
+            ) {
+                return null;
+            }
+
+            $settings = $config?->getDriverSettings($name) ?? [];
+        } else {
+            if(!$class::isAvailable()) {
+                return null;
+            }
+
+            $settings = [];
         }
-
-        $settings = $config?->getDriverSettings($name) ?? [];
 
         if (
             !isset($settings['prefix']) &&
