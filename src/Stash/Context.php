@@ -159,7 +159,7 @@ class Context
             return $this->caches[$namespace];
         }
 
-        $driver = $this->loadDriverFor($namespace);
+        $driver = $this->loadDriverFor($namespace, stealth: true);
 
         try {
             $class = Archetype::resolve(Store::class, $namespace);
@@ -175,17 +175,21 @@ class Context
      * Get driver for namespace
      */
     public function loadDriverFor(
-        string $namespace
+        string $namespace,
+        bool $stealth = false
     ): Driver {
         $drivers = self::Drivers;
 
-        if (null !== ($driverName = $this->getConfig()?->getDriverFor($namespace))) {
+        if (
+            !$stealth &&
+            (null !== ($driverName = $this->getConfig()?->getDriverFor($namespace)))
+        ) {
             array_unshift($drivers, $driverName);
         }
 
         foreach ($drivers as $name) {
             try {
-                if ($driver = $this->loadDriver($name)) {
+                if ($driver = $this->loadDriver($name, $stealth)) {
                     return $driver;
                 }
             } catch (ArchetypeException $e) {
@@ -205,19 +209,29 @@ class Context
      * Load driver by name
      */
     public function loadDriver(
-        string $name
+        string $name,
+        bool $stealth = false
     ): ?Driver {
         $class = Archetype::resolve(Driver::class, $name);
-        $config = $this->getConfig();
 
-        if (
-            !$class::isAvailable() ||
-            !($config?->isDriverEnabled($name) ?? true)
-        ) {
-            return null;
+        if(!$stealth) {
+            $config = $this->getConfig();
+
+            if (
+                !$class::isAvailable() ||
+                !($config?->isDriverEnabled($name) ?? true)
+            ) {
+                return null;
+            }
+
+            $settings = $config?->getDriverSettings($name) ?? [];
+        } else {
+            if(!$class::isAvailable()) {
+                return null;
+            }
+
+            $settings = [];
         }
-
-        $settings = $config?->getDriverSettings($name) ?? [];
 
         if (
             !isset($settings['prefix']) &&
