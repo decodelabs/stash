@@ -4,11 +4,11 @@ All notable changes to this project will be documented in this file.<br>
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+### Unreleased
 --
 
 
-## [v0.6.3](https://github.com/decodelabs/stash/commits/v0.6.3) - 16th May 2025
+### [v0.6.3](https://github.com/decodelabs/stash/commits/v0.6.3) - 16th May 2025
 
 - Added loadStealth() to avoid loading config in non-project context
 
@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [v0.6.2](https://github.com/decodelabs/stash/commits/v0.6.2) - 9th April 2025
+### [v0.6.2](https://github.com/decodelabs/stash/commits/v0.6.2) - 9th April 2025
 
 - Added Genesis build task
 - Replaced Genesis info with Monarch
@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [v0.6.1](https://github.com/decodelabs/stash/commits/v0.6.1) - 20th February 2025
+### [v0.6.1](https://github.com/decodelabs/stash/commits/v0.6.1) - 20th February 2025
 
 - Upgraded Coercion dependency
 - Upgraded Genesis dependency
