@@ -12,7 +12,7 @@
         "php": "^8.4",
 
         "decodelabs/archetype": "^0.3.8",
-        "decodelabs/atlas": "^0.12.3",
+        "decodelabs/atlas": "^0.13",
         "decodelabs/coercion": "^0.3",
         "decodelabs/dictum": "^0.6.9",
         "decodelabs/exceptional": "^0.5.3",
@@ -32,6 +32,10 @@
         "ext-apcu": "^5.1",
         "ext-redis": "^5.3|^6",
         "predis/predis": "^2.3"
+    },
+    "conflict": {
+        "decodelabs/dovetail": "<0.2",
+        "decodelabs/genesis": "<0.12"
     },
     "suggest": {
         "decodelabs/dovetail": "For dovetail config integration",

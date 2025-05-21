@@ -90,7 +90,7 @@ class File implements Driver
         }
 
         if (function_exists('opcache_invalidate')) {
-            opcache_invalidate($file->getPath(), true);
+            opcache_invalidate($file->path, true);
         }
 
         return $output;
