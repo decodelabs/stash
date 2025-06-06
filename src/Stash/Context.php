@@ -18,7 +18,6 @@ use DecodeLabs\Coercion;
 use DecodeLabs\Dovetail;
 use DecodeLabs\Dovetail\Config\Stash as StashConfig;
 use DecodeLabs\Exceptional;
-use DecodeLabs\Glitch\Proxy as Glitch;
 use DecodeLabs\Monarch;
 use DecodeLabs\Stash;
 use DecodeLabs\Stash\FileStore\Generic as GenericFileStore;
@@ -196,7 +195,7 @@ class Context
                 // Ignore
                 continue;
             } catch (Throwable $e) {
-                Glitch::logException($e);
+                Monarch::logException($e);
             }
         }
 
@@ -270,7 +269,7 @@ class Context
                 return;
             }
         } catch (Throwable $e) {
-            Glitch::logException($e);
+            Monarch::logException($e);
             return;
         }
 
