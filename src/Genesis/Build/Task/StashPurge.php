@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Genesis\Build\Task;
 
-use DecodeLabs\Genesis\Build\Task\PostActivation;
 use DecodeLabs\Stash;
 use DecodeLabs\Terminus\Session;
 
@@ -22,7 +21,9 @@ class StashPurge implements PostActivation
         get => 'Purging caches';
     }
 
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 
     public function run(
         Session $session

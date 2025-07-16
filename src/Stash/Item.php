@@ -24,42 +24,42 @@ class Item implements CacheItem
 {
     public const int LockTTL = 30;
 
-    protected(set) string $key;
+    public protected(set) string $key;
 
     /**
      * @var ?T
      */
-    protected(set) mixed $value;
+    public protected(set) mixed $value;
 
-    protected(set) bool $hit = false;
+    public protected(set) bool $hit = false;
     protected bool $fetched = false;
 
-    protected(set) ?Carbon $expiration = null;
-    protected(set) bool $locked = false;
+    public protected(set) ?Carbon $expiration = null;
+    public protected(set) bool $locked = false;
 
-    protected(set) ?PileUpPolicy $pileUpPolicy = null;
-
-    /**
-     * @phpstan-var positive-int|null
-     */
-    protected(set) ?int $preemptTime = null;
+    public protected(set) ?PileUpPolicy $pileUpPolicy = null;
 
     /**
      * @phpstan-var positive-int|null
      */
-    protected(set) ?int $sleepTime = null;
+    public protected(set) ?int $preemptTime = null;
 
     /**
      * @phpstan-var positive-int|null
      */
-    protected(set) ?int $sleepAttempts = null;
+    public protected(set) ?int $sleepTime = null;
 
-    protected(set) mixed $fallbackValue = null;
+    /**
+     * @phpstan-var positive-int|null
+     */
+    public protected(set) ?int $sleepAttempts = null;
+
+    public protected(set) mixed $fallbackValue = null;
 
     /**
      * @var Store<T>
      */
-    protected(set) Store $store;
+    public protected(set) Store $store;
 
     /**
      * Init with store and key

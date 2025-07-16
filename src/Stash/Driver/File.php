@@ -244,7 +244,7 @@ class File implements Driver
             return null;
         }
 
-        return  (int)$expires;
+        return (int)$expires;
     }
 
     /**

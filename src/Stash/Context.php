@@ -213,7 +213,7 @@ class Context
     ): ?Driver {
         $class = Archetype::resolve(Driver::class, $name);
 
-        if(!$stealth) {
+        if (!$stealth) {
             $config = $this->getConfig();
 
             if (
@@ -225,7 +225,7 @@ class Context
 
             $settings = $config?->getDriverSettings($name) ?? [];
         } else {
-            if(!$class::isAvailable()) {
+            if (!$class::isAvailable()) {
                 return null;
             }
 
