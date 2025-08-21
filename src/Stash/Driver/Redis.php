@@ -21,17 +21,11 @@ class Redis implements Driver
 
     protected Client $client;
 
-    /**
-     * Can this be loaded?
-     */
     public static function isAvailable(): bool
     {
         return extension_loaded('redis');
     }
 
-    /**
-     * Init with settings
-     */
     public function __construct(
         Stash $context,
         array $settings
@@ -61,10 +55,6 @@ class Redis implements Driver
         }
     }
 
-
-    /**
-     * Store item data
-     */
     public function store(
         string $namespace,
         string $key,
@@ -88,9 +78,6 @@ class Redis implements Driver
         }
     }
 
-    /**
-     * Fetch item data
-     */
     public function fetch(
         string $namespace,
         string $key
@@ -112,9 +99,6 @@ class Redis implements Driver
         return $output;
     }
 
-    /**
-     * Remove item from store
-     */
     public function delete(
         string $namespace,
         string $key
@@ -136,9 +120,6 @@ class Redis implements Driver
         return true;
     }
 
-    /**
-     * Clear all values from store
-     */
     public function clearAll(
         string $namespace
     ): bool {
@@ -152,11 +133,6 @@ class Redis implements Driver
         return true;
     }
 
-
-
-    /**
-     * Save a lock for a key
-     */
     public function storeLock(
         string $namespace,
         string $key,
@@ -166,9 +142,6 @@ class Redis implements Driver
         return $this->client->setex($key, $expires, (string)($expires - time()));
     }
 
-    /**
-     * Get a lock expiry for a key
-     */
     public function fetchLock(
         string $namespace,
         string $key
@@ -178,9 +151,6 @@ class Redis implements Driver
         return Coercion::tryInt($output);
     }
 
-    /**
-     * Remove a lock
-     */
     public function deleteLock(
         string $namespace,
         string $key
@@ -189,38 +159,23 @@ class Redis implements Driver
         return (bool)$this->client->del($key);
     }
 
-
-    /**
-     * Count items
-     */
     public function count(
         string $namespace,
     ): int {
         return count($this->getKeys($namespace));
     }
 
-    /**
-     * Get key
-     */
     public function getKeys(string $namespace): array
     {
         return $this->client->keys($this->prefix . ':*');
     }
 
-
-    /**
-     * Get cached path index
-     */
     protected function getPathIndex(
         string $pathKey
     ): int {
         return Coercion::asInt($this->client->get($pathKey));
     }
 
-
-    /**
-     * Delete EVERYTHING in this store
-     */
     public function purge(): void
     {
         $this->client->flushDb();

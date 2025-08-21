@@ -19,17 +19,11 @@ class Composite implements Driver
      */
     protected array $drivers = [];
 
-    /**
-     * Can this be loaded?
-     */
     public static function isAvailable(): bool
     {
         return true;
     }
 
-    /**
-     * Init with drivers
-     */
     public function __construct(
         Stash $context,
         array $settings
@@ -45,9 +39,6 @@ class Composite implements Driver
         }
     }
 
-    /**
-     * Store item data
-     */
     public function store(
         string $namespace,
         string $key,
@@ -66,9 +57,6 @@ class Composite implements Driver
         return $output;
     }
 
-    /**
-     * Fetch item data
-     */
     public function fetch(
         string $namespace,
         string $key
@@ -84,9 +72,6 @@ class Composite implements Driver
         return null;
     }
 
-    /**
-     * Remove item from store
-     */
     public function delete(
         string $namespace,
         string $key
@@ -102,9 +87,6 @@ class Composite implements Driver
         return $output;
     }
 
-    /**
-     * Clear all values from store
-     */
     public function clearAll(
         string $namespace
     ): bool {
@@ -120,10 +102,6 @@ class Composite implements Driver
     }
 
 
-
-    /**
-     * Save a lock for a key
-     */
     public function storeLock(
         string $namespace,
         string $key,
@@ -140,9 +118,6 @@ class Composite implements Driver
         return $output;
     }
 
-    /**
-     * Get a lock expiry for a key
-     */
     public function fetchLock(
         string $namespace,
         string $key
@@ -158,9 +133,6 @@ class Composite implements Driver
         return null;
     }
 
-    /**
-     * Remove a lock
-     */
     public function deleteLock(
         string $namespace,
         string $key
@@ -177,18 +149,12 @@ class Composite implements Driver
     }
 
 
-    /**
-     * Count items
-     */
     public function count(
         string $namespace
     ): int {
         return count($this->getKeys($namespace));
     }
 
-    /**
-     * Get all keys
-     */
     public function getKeys(
         string $namespace
     ): array {
@@ -201,10 +167,6 @@ class Composite implements Driver
         return array_unique($output);
     }
 
-
-    /**
-     * Delete EVERYTHING in this store
-     */
     public function purge(): void
     {
         foreach (array_reverse($this->drivers) as $driver) {

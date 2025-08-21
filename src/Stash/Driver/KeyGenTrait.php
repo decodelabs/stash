@@ -15,9 +15,6 @@ trait KeyGenTrait
 {
     protected string $prefix;
 
-    /**
-     * Create a unique prefix
-     */
     protected function generatePrefix(
         ?string $prefix = null
     ): void {
@@ -25,8 +22,6 @@ trait KeyGenTrait
     }
 
     /**
-     * Generate list of keys to delete
-     *
      * @return array<string,mixed>
      * @return array{'normal': ?string, 'children': bool, 'self': bool}
      */
@@ -56,9 +51,6 @@ trait KeyGenTrait
         ];
     }
 
-    /**
-     * Create basic key
-     */
     protected function createKey(
         string $namespace,
         ?string $key
@@ -76,8 +68,6 @@ trait KeyGenTrait
     }
 
     /**
-     * Create basic key and merge with manifest
-     *
      * @return array{'normal': ?string, 'children': bool, 'self': bool, 'key': string}
      */
     protected function inspectKey(
@@ -90,9 +80,6 @@ trait KeyGenTrait
     }
 
 
-    /**
-     * Create an internal key
-     */
     protected function createRegexKey(
         string $namespace,
         ?string $key
@@ -114,9 +101,6 @@ trait KeyGenTrait
         return $output;
     }
 
-    /**
-     * Build key string
-     */
     protected function buildKey(
         string $namespace,
         ?string $key
@@ -131,9 +115,6 @@ trait KeyGenTrait
         return $output;
     }
 
-    /**
-     * Create an internal lock key
-     */
     protected function createLockKey(
         string $namespace,
         string $key

@@ -62,8 +62,6 @@ class Item implements CacheItem
     public protected(set) Store $store;
 
     /**
-     * Init with store and key
-     *
      * @param Store<T> $store
      */
     public function __construct(
@@ -75,17 +73,12 @@ class Item implements CacheItem
     }
 
 
-    /**
-     * Returns the key for the current cache item.
-     */
     public function getKey(): string
     {
         return $this->key;
     }
 
     /**
-     * Sets the value represented by this cache item.
-     *
      * @param T $value
      * @return $this
      */
@@ -99,8 +92,6 @@ class Item implements CacheItem
     }
 
     /**
-     * Retrieves the value of the item from the cache associated with this object's key.
-     *
      * @return ?T
      */
     public function get(): mixed
@@ -112,9 +103,6 @@ class Item implements CacheItem
         return $this->value;
     }
 
-    /**
-     * Confirms if the cache item lookup resulted in a cache hit.
-     */
     public function isHit(): bool
     {
         $this->ensureFetched();
@@ -130,17 +118,12 @@ class Item implements CacheItem
         return true;
     }
 
-    /**
-     * Invert of isHit()
-     */
     public function isMiss(): bool
     {
         return !$this->isHit();
     }
 
     /**
-     * Sets the expiration time for this cache item.
-     *
      * @return $this
      */
     public function expiresAt(
@@ -156,8 +139,6 @@ class Item implements CacheItem
     }
 
     /**
-     * Sets the relative expiration time for this cache item.
-     *
      * @return $this
      */
     public function expiresAfter(
@@ -177,8 +158,6 @@ class Item implements CacheItem
 
 
     /**
-     * Work out best expiration from value
-     *
      * @return $this
      */
     public function setExpiration(
@@ -201,17 +180,11 @@ class Item implements CacheItem
     }
 
 
-    /**
-     * Get actual expiration date (if not permanent)
-     */
     public function getExpiration(): ?Carbon
     {
         return $this->expiration;
     }
 
-    /**
-     * Get expiration as timestamp int
-     */
     public function getExpirationTimestamp(): ?int
     {
         if (!$this->expiration) {
@@ -222,9 +195,6 @@ class Item implements CacheItem
     }
 
 
-    /**
-     * Get time until expiration
-     */
     public function getTimeRemaining(): ?CarbonInterval
     {
         if (!$this->expiration) {
@@ -242,8 +212,6 @@ class Item implements CacheItem
 
 
     /**
-     * Set pile up policy to ignore
-     *
      * @return $this
      */
     public function pileUpIgnore(): static
@@ -253,8 +221,6 @@ class Item implements CacheItem
     }
 
     /**
-     * Set pile up policy to preempt
-     *
      * @param positive-int|null $time
      * @return $this
      */
@@ -271,8 +237,6 @@ class Item implements CacheItem
     }
 
     /**
-     * Set pile up policy to sleep
-     *
      * @param positive-int|null $time
      * @param positive-int|null $attempts
      * @return $this
@@ -295,8 +259,6 @@ class Item implements CacheItem
     }
 
     /**
-     * Set pile up policy to return value
-     *
      * @return $this
      */
     public function pileUpValue(
@@ -309,8 +271,6 @@ class Item implements CacheItem
 
 
     /**
-     * Set pile up policy
-     *
      * @return $this
      */
     public function setPileUpPolicy(
@@ -320,9 +280,6 @@ class Item implements CacheItem
         return $this;
     }
 
-    /**
-     * Get pile up policy
-     */
     public function getPileUpPolicy(): PileUpPolicy
     {
         return $this->pileUpPolicy ?? $this->store->getPileUpPolicy();
@@ -330,8 +287,6 @@ class Item implements CacheItem
 
 
     /**
-     * Replace preempt time
-     *
      * @param positive-int $time
      * @return $this
      */
@@ -343,8 +298,6 @@ class Item implements CacheItem
     }
 
     /**
-     * Get preempt time
-     *
      * @return positive-int
      */
     public function getPreemptTime(): int
@@ -354,8 +307,6 @@ class Item implements CacheItem
 
 
     /**
-     * Replace sleep time
-     *
      * @param positive-int $time
      * @return $this
      */
@@ -367,8 +318,6 @@ class Item implements CacheItem
     }
 
     /**
-     * Get sleep time
-     *
      * @return positive-int
      */
     public function getSleepTime(): int
@@ -377,8 +326,6 @@ class Item implements CacheItem
     }
 
     /**
-     * Replace sleep attempts
-     *
      * @param positive-int $attempts
      * @return $this
      */
@@ -390,8 +337,6 @@ class Item implements CacheItem
     }
 
     /**
-     * Get sleep attempts
-     *
      * @return positive-int
      */
     public function getSleepAttempts(): int
@@ -401,8 +346,6 @@ class Item implements CacheItem
 
 
     /**
-     * Replace fallback value
-     *
      * @return $this
      */
     public function setFallbackValue(
@@ -412,18 +355,12 @@ class Item implements CacheItem
         return $this;
     }
 
-    /**
-     * Get fallback value
-     */
     public function getFallbackValue(): mixed
     {
         return $this->fallbackValue;
     }
 
 
-    /**
-     * Add lock entry to avoid multiple processes regenerating value
-     */
     public function lock(
         DateInterval|string|Stringable|int|null $ttl = null
     ): bool {
@@ -444,9 +381,6 @@ class Item implements CacheItem
         );
     }
 
-    /**
-     * Remove lock entry
-     */
     public function unlock(): void
     {
         if (!$this->locked) {
@@ -459,9 +393,6 @@ class Item implements CacheItem
         );
     }
 
-    /**
-     * Store item to driver
-     */
     public function save(): bool
     {
         $this->ensureFetched();
@@ -503,17 +434,12 @@ class Item implements CacheItem
         );
     }
 
-    /**
-     * Defer saving until commit on pool
-     */
     public function defer(): bool
     {
         return $this->store->saveDeferred($this);
     }
 
     /**
-     * Set value and save
-     *
      * @param T $value
      */
     public function update(
@@ -528,9 +454,6 @@ class Item implements CacheItem
         return $this->save();
     }
 
-    /**
-     * Re-store item
-     */
     public function extend(
         DateTimeInterface|DateInterval|string|int|null $ttl = null
     ): bool {
@@ -545,9 +468,6 @@ class Item implements CacheItem
         return $this->save();
     }
 
-    /**
-     * Delete current item
-     */
     public function delete(): bool
     {
         $output = $this->store->getDriver()->delete(
@@ -564,9 +484,6 @@ class Item implements CacheItem
     }
 
 
-    /**
-     * Ensure data has been fetched from driver
-     */
     protected function ensureFetched(): void
     {
         if ($this->fetched) {

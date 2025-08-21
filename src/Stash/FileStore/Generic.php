@@ -62,8 +62,6 @@ class Generic implements FileStore
     }
 
     /**
-     * Set file
-     *
      * @param string|File $file
      */
     public function set(
@@ -79,8 +77,6 @@ class Generic implements FileStore
     }
 
     /**
-     * Set multiple files
-     *
      * @param iterable<string, string|File> $values
      */
     public function setMultiple(
@@ -95,9 +91,6 @@ class Generic implements FileStore
         return true;
     }
 
-    /**
-     * Get file
-     */
     public function get(
         string $key,
         DateInterval|string|Stringable|int|null $ttl = null
@@ -119,8 +112,6 @@ class Generic implements FileStore
     }
 
     /**
-     * Get multiple files
-     *
      * @param iterable<string> $keys
      * @return iterable<string, ?File>
      */
@@ -267,9 +258,6 @@ class Generic implements FileStore
 
 
 
-    /**
-     * Delete file
-     */
     public function delete(
         string $key,
         string ...$keys
@@ -352,8 +340,6 @@ class Generic implements FileStore
 
 
     /**
-     * Shortcut set()
-     *
      * @param string|File $file
      */
     public function offsetSet(
@@ -364,8 +350,6 @@ class Generic implements FileStore
     }
 
     /**
-     * Shortcut get()
-     *
      * @return ?File
      */
     public function offsetGet(
@@ -374,9 +358,7 @@ class Generic implements FileStore
         return $this->get($key);
     }
 
-    /**
-     * Shortcut has()
-     */
+
     public function offsetExists(
         mixed $key
     ): bool {
@@ -384,8 +366,6 @@ class Generic implements FileStore
     }
 
     /**
-     * Shortcut delete()
-     *
      * @param string $key
      */
     public function offsetUnset(
@@ -396,9 +376,6 @@ class Generic implements FileStore
 
 
 
-    /**
-     * Normalize key
-     */
     protected function normalizeKey(
         string $key
     ): string {
@@ -409,9 +386,7 @@ class Generic implements FileStore
             ->__toString();
     }
 
-    /**
-     * Create key
-     */
+
     protected function createKey(
         string $key
     ): string {
@@ -419,8 +394,6 @@ class Generic implements FileStore
     }
 
     /**
-     * Normalize input file
-     *
      * @return ($file is null ? File : null)
      */
     protected function normalizeFile(
@@ -437,9 +410,6 @@ class Generic implements FileStore
         return $file;
     }
 
-    /**
-     * Get target file
-     */
     protected function getFile(
         string $key
     ): File {

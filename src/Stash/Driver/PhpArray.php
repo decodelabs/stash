@@ -27,19 +27,11 @@ class PhpArray implements Driver
      */
     protected array $locks = [];
 
-
-    /**
-     * Can this be loaded?
-     */
     public static function isAvailable(): bool
     {
         return true;
     }
 
-
-    /**
-     * Init with settings
-     */
     public function __construct(
         Stash $context,
         array $settings
@@ -49,10 +41,6 @@ class PhpArray implements Driver
         );
     }
 
-
-    /**
-     * Store item data
-     */
     public function store(
         string $namespace,
         string $key,
@@ -67,9 +55,6 @@ class PhpArray implements Driver
         return true;
     }
 
-    /**
-     * Fetch item data
-     */
     public function fetch(
         string $namespace,
         string $key
@@ -77,9 +62,6 @@ class PhpArray implements Driver
         return $this->values[$this->createKey($namespace, $key)] ?? null;
     }
 
-    /**
-     * Remove item from store
-     */
     public function delete(
         string $namespace,
         string $key
@@ -95,9 +77,6 @@ class PhpArray implements Driver
         return true;
     }
 
-    /**
-     * Clear all values from store
-     */
     public function clearAll(
         string $namespace
     ): bool {
@@ -113,11 +92,6 @@ class PhpArray implements Driver
         return true;
     }
 
-
-
-    /**
-     * Save a lock for a key
-     */
     public function storeLock(
         string $namespace,
         string $key,
@@ -127,9 +101,6 @@ class PhpArray implements Driver
         return true;
     }
 
-    /**
-     * Get a lock expiry for a key
-     */
     public function fetchLock(
         string $namespace,
         string $key
@@ -137,9 +108,6 @@ class PhpArray implements Driver
         return $this->locks[$namespace][$key] ?? null;
     }
 
-    /**
-     * Remove a lock
-     */
     public function deleteLock(
         string $namespace,
         string $key
@@ -148,20 +116,12 @@ class PhpArray implements Driver
         return true;
     }
 
-
-    /**
-     * Count items
-     */
     public function count(
         string $namespace
     ): int {
         return count($this->getKeys($namespace));
     }
 
-
-    /**
-     * Get keys
-     */
     public function getKeys(
         string $namespace
     ): array {
@@ -177,10 +137,6 @@ class PhpArray implements Driver
         return $output;
     }
 
-
-    /**
-     * Delete EVERYTHING in this store
-     */
     public function purge(): void
     {
         $this->values = [];

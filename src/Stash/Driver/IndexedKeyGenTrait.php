@@ -22,8 +22,6 @@ trait IndexedKeyGenTrait
     private float $keyCacheTimeLimit = 1;
 
     /**
-     * Create path key
-     *
      * @return array{0: string, 1: string}
      */
     protected function createNestedKey(

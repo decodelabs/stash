@@ -39,8 +39,6 @@ interface Store extends
     public function getDriver(): Driver;
 
     /**
-     * Fetches a value from the cache.
-     *
      * @param ?T $default
      * @return ?T
      */
@@ -50,8 +48,6 @@ interface Store extends
     ): mixed;
 
     /**
-     * Retrive item object, regardless of hit or miss
-     *
      * @return Item<T>
      */
     public function getItem(
@@ -59,8 +55,6 @@ interface Store extends
     ): Item;
 
     /**
-     * Obtains multiple cache items by their unique keys.
-     *
      * @param iterable<int, string> $keys
      * @param ?T $default
      * @return iterable<string, ?T>
@@ -71,8 +65,6 @@ interface Store extends
     ): iterable;
 
     /**
-     * Retrieve a list of items
-     *
      * @param array<string> $keys
      * @return iterable<string, Item<T>>
      */
@@ -89,33 +81,22 @@ interface Store extends
         Closure $generator
     ): mixed;
 
-    /**
-     * Determines whether an item is present in the cache.
-     */
     public function has(
         string $key,
         string ...$keys
     ): bool;
 
-    /**
-     * Delete an item from the cache by its unique key.
-     */
     public function delete(
         string $key,
         string ...$keys
     ): bool;
 
-    /**
-     * Removes the item from the pool.
-     */
     public function deleteItem(
         string $key,
         string ...$keys
     ): bool;
 
     /**
-     * Persists data in the cache, uniquely referenced by a key with an optional expiration TTL time.
-     *
      * @param T $value
      */
     public function set(
@@ -125,8 +106,6 @@ interface Store extends
     ): bool;
 
     /**
-     * Persists a set of key => value pairs in the cache, with an optional TTL.
-     *
      * @param iterable<string, T> $values
      */
     public function setMultiple(
@@ -135,8 +114,6 @@ interface Store extends
     ): bool;
 
     /**
-     * Persists a cache item immediately.
-     *
      * @param Item<T> $item
      */
     public function save(
@@ -144,8 +121,6 @@ interface Store extends
     ): bool;
 
     /**
-     * Sets a cache item to be persisted later.
-     *
      * @param Item<T> $item
      */
     public function saveDeferred(

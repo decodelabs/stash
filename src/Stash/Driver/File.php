@@ -30,18 +30,12 @@ class File implements Driver
     public int $dirPermissions = 0770;
     public int $filePermissions = 0660;
 
-    /**
-     * Can this be loaded?
-     */
     public static function isAvailable(): bool
     {
         return true;
     }
 
 
-    /**
-     * Init with settings
-     */
     public function __construct(
         Stash $context,
         array $settings
@@ -69,10 +63,6 @@ class File implements Driver
         }
     }
 
-
-    /**
-     * Store item data
-     */
     public function store(
         string $namespace,
         string $key,
@@ -98,9 +88,6 @@ class File implements Driver
         return $output;
     }
 
-    /**
-     * Store item data in file
-     */
     protected function buildFileContent(
         FileInterface $file,
         string $namespace,
@@ -117,9 +104,6 @@ class File implements Driver
         ]);
     }
 
-    /**
-     * Fetch item data
-     */
     public function fetch(
         string $namespace,
         string $key
@@ -149,8 +133,6 @@ class File implements Driver
     }
 
     /**
-     * Get item data from file
-     *
      * @return array{'namespace': string, 'key': string, 'expires': ?int, 'value': mixed}|null
      */
     protected function loadFileContent(
@@ -173,9 +155,6 @@ class File implements Driver
         return $data;
     }
 
-    /**
-     * Remove item from store
-     */
     public function delete(
         string $namespace,
         string $key
@@ -194,9 +173,6 @@ class File implements Driver
         return true;
     }
 
-    /**
-     * Clear all values from store
-     */
     public function clearAll(
         string $namespace
     ): bool {
@@ -207,10 +183,6 @@ class File implements Driver
     }
 
 
-
-    /**
-     * Save a lock for a key
-     */
     public function storeLock(
         string $namespace,
         string $key,
@@ -226,9 +198,6 @@ class File implements Driver
         }
     }
 
-    /**
-     * Get a lock expiry for a key
-     */
     public function fetchLock(
         string $namespace,
         string $key
@@ -249,9 +218,6 @@ class File implements Driver
         return (int)$expires;
     }
 
-    /**
-     * Remove a lock
-     */
     public function deleteLock(
         string $namespace,
         string $key
@@ -262,10 +228,6 @@ class File implements Driver
     }
 
 
-
-    /**
-     * Create file path from key
-     */
     protected function getFile(
         string $namespace,
         string $key
@@ -275,9 +237,6 @@ class File implements Driver
         return $this->dir->getFile($key);
     }
 
-    /**
-     * Create file path from key
-     */
     protected function getLockFile(
         string $namespace,
         string $key
@@ -287,9 +246,6 @@ class File implements Driver
         return $this->dir->getFile($key);
     }
 
-    /**
-     * Hash key parts
-     */
     protected function hashKey(
         string $key
     ): string {
@@ -305,10 +261,6 @@ class File implements Driver
         return implode(static::KeySeparator, $parts);
     }
 
-
-    /**
-     * Count items
-     */
     public function count(
         string $namespace
     ): int {
@@ -329,20 +281,11 @@ class File implements Driver
         return $output;
     }
 
-
-
-    /**
-     * Delete EVERYTHING in this store
-     */
     public function purge(): void
     {
         $this->dir->delete();
     }
 
-
-    /**
-     * Get key separator
-     */
     protected function getKeySeparator(): string
     {
         return static::KeySeparator;

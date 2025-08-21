@@ -55,9 +55,7 @@ class Generic implements Store
 
 
 
-    /**
-     * Init with namespace and driver
-     */
+
     public function __construct(
         string $namespace,
         Driver $driver
@@ -66,17 +64,13 @@ class Generic implements Store
         $this->namespace = $namespace;
     }
 
-    /**
-     * Get active driver
-     */
+
     public function getDriver(): Driver
     {
         return $this->driver;
     }
 
-    /**
-     * Get active namespace
-     */
+
     public function getNamespace(): string
     {
         return $this->namespace;
@@ -85,8 +79,6 @@ class Generic implements Store
 
 
     /**
-     * Fetches a value from the cache.
-     *
      * @param ?T $default
      * @return ?T
      */
@@ -107,8 +99,6 @@ class Generic implements Store
 
 
     /**
-     * Retrive item object, regardless of hit or miss
-     *
      * @return Item<T>
      */
     public function getItem(
@@ -125,8 +115,6 @@ class Generic implements Store
 
 
     /**
-     * Obtains multiple cache items by their unique keys.
-     *
      * @param iterable<int, string> $keys
      * @param ?T $default
      * @return iterable<string, ?T>
@@ -150,8 +138,6 @@ class Generic implements Store
 
 
     /**
-     * Retrieve a list of items
-     *
      * @param array<string> $keys
      * @return iterable<string, Item<T>>
      */
@@ -169,9 +155,6 @@ class Generic implements Store
     }
 
 
-    /**
-     * Determines whether an item is present in the cache.
-     */
     public function has(
         string $key,
         string ...$keys
@@ -191,9 +174,6 @@ class Generic implements Store
     }
 
 
-    /**
-     * Confirms if the cache contains specified cache item.
-     */
     public function hasItem(
         string $key
     ): bool {
@@ -201,9 +181,6 @@ class Generic implements Store
     }
 
 
-    /**
-     * Deletes all items in the pool.
-     */
     public function clear(): bool
     {
         $this->clearDeferred();
@@ -211,9 +188,6 @@ class Generic implements Store
     }
 
 
-    /**
-     * Forget things that have been deferred
-     */
     public function clearDeferred(): bool
     {
         $this->deferred = [];
@@ -221,9 +195,6 @@ class Generic implements Store
     }
 
 
-    /**
-     * Delete an item from the cache by its unique key.
-     */
     public function delete(
         string $key,
         string ...$keys
@@ -237,9 +208,6 @@ class Generic implements Store
     }
 
 
-    /**
-     * Removes the item from the pool.
-     */
     public function deleteItem(
         string $key,
         string ...$keys
@@ -251,8 +219,6 @@ class Generic implements Store
     }
 
     /**
-     * Deletes multiple cache items in a single operation.
-     *
      * @param iterable<int, string> $keys
      */
     public function deleteMultiple(
@@ -267,8 +233,6 @@ class Generic implements Store
     }
 
     /**
-     * Removes multiple items from the pool.
-     *
      * @param array<string> $keys
      */
     public function deleteItems(
@@ -289,9 +253,6 @@ class Generic implements Store
     }
 
 
-    /**
-     * Get item, if miss, set $key as result of $generator
-     */
     public function fetch(
         string $key,
         Closure $generator
@@ -319,8 +280,6 @@ class Generic implements Store
 
 
     /**
-     * Persists data in the cache, uniquely referenced by a key with an optional expiration TTL time.
-     *
      * @param T $value
      */
     public function set(
@@ -338,8 +297,6 @@ class Generic implements Store
     }
 
     /**
-     * Persists a set of key => value pairs in the cache, with an optional TTL.
-     *
      * @param iterable<string, T> $values
      */
     public function setMultiple(
@@ -370,8 +327,6 @@ class Generic implements Store
 
 
     /**
-     * Persists a cache item immediately.
-     *
      * @param Item<T> $item
      */
     public function save(
@@ -383,8 +338,6 @@ class Generic implements Store
 
 
     /**
-     * Sets a cache item to be persisted later.
-     *
      * @param Item<T> $item
      */
     public function saveDeferred(
@@ -396,9 +349,6 @@ class Generic implements Store
     }
 
 
-    /**
-     * Persists any deferred cache items.
-     */
     public function commit(): bool
     {
         $output = true;
@@ -417,9 +367,6 @@ class Generic implements Store
 
 
 
-    /**
-     * Shortcut set
-     */
     public function __set(
         string $key,
         mixed $value
@@ -427,27 +374,18 @@ class Generic implements Store
         $this->set($key, $value);
     }
 
-    /**
-     * Shortcut getItem()
-     */
     public function __get(
         string $key
     ): Item {
         return $this->getItem($key);
     }
 
-    /**
-     * Shortcut hasItem()
-     */
     public function __isset(
         string $key
     ): bool {
         return $this->hasItem($key);
     }
 
-    /**
-     * Shortcut delete item
-     */
     public function __unset(
         string $key
     ): void {
@@ -457,8 +395,6 @@ class Generic implements Store
 
 
     /**
-     * Shortcut set()
-     *
      * @param T $value
      */
     public function offsetSet(
@@ -469,8 +405,6 @@ class Generic implements Store
     }
 
     /**
-     * Shortcut get()
-     *
      * @return ?T
      */
     public function offsetGet(
@@ -479,9 +413,6 @@ class Generic implements Store
         return $this->get($key);
     }
 
-    /**
-     * Shortcut has()
-     */
     public function offsetExists(
         mixed $key
     ): bool {
@@ -489,8 +420,6 @@ class Generic implements Store
     }
 
     /**
-     * Shortcut delete()
-     *
      * @param string $key
      */
     public function offsetUnset(
@@ -501,17 +430,13 @@ class Generic implements Store
 
 
 
-    /**
-     * Count items
-     */
+
     public function count(): int
     {
         return $this->driver->count($this->namespace);
     }
 
-    /**
-     * Get internal keys for loaded driver
-     */
+
     public function getDriverKeys(): array
     {
         return $this->driver->getKeys($this->namespace);
@@ -519,18 +444,14 @@ class Generic implements Store
 
 
 
-    /**
-     * Set pile up policy to ignore
-     */
+
     public function pileUpIgnore(): static
     {
         $this->pileUpPolicy = PileUpPolicy::Ignore;
         return $this;
     }
 
-    /**
-     * Set pile up policy to preempt
-     */
+
     public function pileUpPreempt(
         ?int $preemptTime = null
     ): static {
@@ -543,9 +464,7 @@ class Generic implements Store
         return $this;
     }
 
-    /**
-     * Set pile up policy to sleep
-     */
+
     public function pileUpSleep(
         ?int $time = null,
         ?int $attempts = null
@@ -563,9 +482,7 @@ class Generic implements Store
         return $this;
     }
 
-    /**
-     * Set pile up policy to return value
-     */
+
     public function pileUpValue(): static
     {
         $this->pileUpPolicy = PileUpPolicy::Value;
@@ -573,9 +490,7 @@ class Generic implements Store
     }
 
 
-    /**
-     * Set pile up policy
-     */
+
     public function setPileUpPolicy(
         PileUpPolicy $policy
     ): static {
@@ -583,18 +498,14 @@ class Generic implements Store
         return $this;
     }
 
-    /**
-     * Get pile up policy
-     */
+
     public function getPileUpPolicy(): PileUpPolicy
     {
         return $this->pileUpPolicy;
     }
 
 
-    /**
-     * Replace preempt time
-     */
+
     public function setPreemptTime(
         int $preemptTime
     ): static {
@@ -602,18 +513,14 @@ class Generic implements Store
         return $this;
     }
 
-    /**
-     * Get preempt time
-     */
+
     public function getPreemptTime(): int
     {
         return $this->preemptTime;
     }
 
 
-    /**
-     * Replace sleep time
-     */
+
     public function setSleepTime(
         int $time
     ): static {
@@ -621,17 +528,13 @@ class Generic implements Store
         return $this;
     }
 
-    /**
-     * Get sleep time
-     */
+
     public function getSleepTime(): int
     {
         return $this->sleepTime;
     }
 
-    /**
-     * Replace sleep attempts
-     */
+
     public function setSleepAttempts(
         int $attempts
     ): static {
@@ -639,9 +542,7 @@ class Generic implements Store
         return $this;
     }
 
-    /**
-     * Get sleep attempts
-     */
+
     public function getSleepAttempts(): int
     {
         return $this->sleepAttempts;
@@ -651,9 +552,7 @@ class Generic implements Store
 
 
 
-    /**
-     * Validate single key
-     */
+
     protected function validateKey(
         string $key
     ): string {
@@ -676,8 +575,6 @@ class Generic implements Store
 
 
     /**
-     * Check cache item
-     *
      * @return Item<T>
      */
     protected function checkCacheItem(
@@ -695,8 +592,6 @@ class Generic implements Store
 
 
     /**
-     * Wrap simple errors
-     *
      * @template E
      * @param Closure(): E $func
      * @return E

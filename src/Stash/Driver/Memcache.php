@@ -20,18 +20,11 @@ class Memcache implements Driver
 
     protected Client $client;
 
-    /**
-     * Can this be loaded?
-     */
     public static function isAvailable(): bool
     {
         return extension_loaded('memcached');
     }
 
-
-    /**
-     * Init with settings
-     */
     public function __construct(
         Stash $context,
         array $settings
@@ -54,10 +47,6 @@ class Memcache implements Driver
         $this->client = $client;
     }
 
-
-    /**
-     * Store item data
-     */
     public function store(
         string $namespace,
         string $key,
@@ -69,9 +58,6 @@ class Memcache implements Driver
         return $this->client->set($key, [$value, $expires], $expires ?? 0);
     }
 
-    /**
-     * Fetch item data
-     */
     public function fetch(
         string $namespace,
         string $key
@@ -87,9 +73,6 @@ class Memcache implements Driver
         return $output;
     }
 
-    /**
-     * Remove item from store
-     */
     public function delete(
         string $namespace,
         string $key
@@ -111,9 +94,6 @@ class Memcache implements Driver
         return true;
     }
 
-    /**
-     * Clear all values from store
-     */
     public function clearAll(
         string $namespace
     ): bool {
@@ -128,10 +108,6 @@ class Memcache implements Driver
     }
 
 
-
-    /**
-     * Save a lock for a key
-     */
     public function storeLock(
         string $namespace,
         string $key,
@@ -141,9 +117,6 @@ class Memcache implements Driver
         return $this->client->set($key, $expires, $expires);
     }
 
-    /**
-     * Get a lock expiry for a key
-     */
     public function fetchLock(
         string $namespace,
         string $key
@@ -158,9 +131,6 @@ class Memcache implements Driver
         return $output;
     }
 
-    /**
-     * Remove a lock
-     */
     public function deleteLock(
         string $namespace,
         string $key
@@ -169,10 +139,6 @@ class Memcache implements Driver
         return $this->client->delete($key);
     }
 
-
-    /**
-     * Count items
-     */
     public function count(
         string $namespace,
     ): int {
@@ -194,9 +160,6 @@ class Memcache implements Driver
         return $output;
     }
 
-    /**
-     * Get key
-     */
     public function getKeys(
         string $namespace
     ): array {
@@ -218,21 +181,12 @@ class Memcache implements Driver
         return $output;
     }
 
-
-    /**
-     * Get cached path index
-     */
     protected function getPathIndex(
         string $pathKey
     ): int {
         return Coercion::tryInt($this->client->get($pathKey)) ?? 0;
     }
 
-
-
-    /**
-     * Delete EVERYTHING in this store
-     */
     public function purge(): void
     {
         $this->client->flush();

@@ -16,9 +16,6 @@ class PhpFile extends File
 {
     protected const string Extension = '.php';
 
-    /**
-     * Store item data in file
-     */
     protected function buildFileContent(
         FileInterface $file,
         string $namespace,
@@ -39,9 +36,6 @@ class PhpFile extends File
         return $output;
     }
 
-    /**
-     * Get item data from file
-     */
     protected function loadFileContent(
         FileInterface $file
     ): ?array {

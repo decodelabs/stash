@@ -26,7 +26,7 @@ interface Config
     public function getAllDrivers(): array;
 
     /**
-     * @return array<string, mixed>
+     * @return array<string,mixed>
      */
     public function getDriverSettings(
         string $driver
@@ -58,14 +58,14 @@ interface Config
     ): ?int;
 
     /**
-     * @return array<string, mixed>
+     * @return array<string,mixed>
      */
     public function getFileStoreSettings(
         string $namespace
     ): array;
 
     /**
-     * @return array<string, array<string, mixed>>
+     * @return array<string,array<string,mixed>>
      */
     public function getAllFileStoreSettings(): array;
 }

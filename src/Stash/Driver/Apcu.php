@@ -27,9 +27,6 @@ class Apcu implements Driver
         return extension_loaded('apcu');
     }
 
-    /**
-     * Init with settings
-     */
     public function __construct(
         Stash $context,
         array $settings

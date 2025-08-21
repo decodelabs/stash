@@ -21,18 +21,11 @@ class Predis implements Driver
 
     protected ClientInterface $client;
 
-    /**
-     * Can this be loaded?
-     */
     public static function isAvailable(): bool
     {
         return class_exists(Client::class);
     }
 
-
-    /**
-     * Init with settings
-     */
     public function __construct(
         Stash $context,
         array $settings
@@ -44,10 +37,6 @@ class Predis implements Driver
         $this->client = new Client($settings);
     }
 
-
-    /**
-     * Store item data
-     */
     public function store(
         string $namespace,
         string $key,
@@ -71,9 +60,6 @@ class Predis implements Driver
         }
     }
 
-    /**
-     * Fetch item data
-     */
     public function fetch(
         string $namespace,
         string $key
@@ -95,9 +81,6 @@ class Predis implements Driver
         return $output;
     }
 
-    /**
-     * Remove item from store
-     */
     public function delete(
         string $namespace,
         string $key
@@ -119,9 +102,6 @@ class Predis implements Driver
         return true;
     }
 
-    /**
-     * Clear all values from store
-     */
     public function clearAll(
         string $namespace
     ): bool {
@@ -135,11 +115,6 @@ class Predis implements Driver
         return true;
     }
 
-
-
-    /**
-     * Save a lock for a key
-     */
     public function storeLock(
         string $namespace,
         string $key,
@@ -149,9 +124,6 @@ class Predis implements Driver
         return 'OK' === $this->client->setex($key, $expires, $expires - time())->getPayload();
     }
 
-    /**
-     * Get a lock expiry for a key
-     */
     public function fetchLock(
         string $namespace,
         string $key
@@ -161,9 +133,6 @@ class Predis implements Driver
         return Coercion::tryInt($output);
     }
 
-    /**
-     * Remove a lock
-     */
     public function deleteLock(
         string $namespace,
         string $key
@@ -172,19 +141,12 @@ class Predis implements Driver
         return (bool)$this->client->del($key);
     }
 
-
-    /**
-     * Count items
-     */
     public function count(
         string $namespace,
     ): int {
         return count($this->getKeys($namespace));
     }
 
-    /**
-     * Get key
-     */
     public function getKeys(
         string $namespace
     ): array {
@@ -193,21 +155,12 @@ class Predis implements Driver
         return $output;
     }
 
-
-    /**
-     * Get cached path index
-     */
     protected function getPathIndex(
         string $pathKey
     ): int {
         return (int)$this->client->get($pathKey);
     }
 
-
-
-    /**
-     * Delete EVERYTHING in this store
-     */
     public function purge(): void
     {
         $this->client->flushdb();

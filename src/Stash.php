@@ -81,8 +81,6 @@ class Stash implements Service
 
 
     /**
-     * Set default prefix for all stores
-     *
      * @return $this
      */
     public function setDefaultPrefix(
@@ -92,9 +90,6 @@ class Stash implements Service
         return $this;
     }
 
-    /**
-     * Get default prefix
-     */
     public function getDefaultPrefix(): ?string
     {
         return $this->defaultPrefix;
@@ -103,8 +98,6 @@ class Stash implements Service
 
 
     /**
-     * Get cache store by name
-     *
      * @return Store<mixed>
      */
     public function load(
@@ -151,8 +144,6 @@ class Stash implements Service
     }
 
     /**
-     * Get cache store without loading config
-     *
      * @return Store<mixed>
      */
     public function loadStealth(
@@ -174,9 +165,6 @@ class Stash implements Service
     }
 
 
-    /**
-     * Get driver for namespace
-     */
     public function loadDriverFor(
         string $namespace,
         bool $stealth = false
@@ -208,9 +196,6 @@ class Stash implements Service
         );
     }
 
-    /**
-     * Load driver by name
-     */
     public function loadDriver(
         string $name,
         bool $stealth = false
@@ -245,9 +230,6 @@ class Stash implements Service
     }
 
 
-    /**
-     * Purge all drivers
-     */
     public function purge(): void
     {
         $drivers = ($this->config?->getAllDrivers() ?? []);
@@ -260,9 +242,6 @@ class Stash implements Service
     }
 
 
-    /**
-     * Purge driver
-     */
     public function purgeDriver(
         string $name
     ): void {
@@ -281,9 +260,6 @@ class Stash implements Service
 
 
 
-    /**
-     * Load file store
-     */
     public function loadFileStore(
         string $namespace
     ): FileStore {
@@ -309,9 +285,6 @@ class Stash implements Service
         return $this->fileStores[$namespace] = new $class($namespace, $settings);
     }
 
-    /**
-     * Prune file stores
-     */
     public function pruneFileStores(
         DateInterval|string|Stringable|int $duration
     ): int {
@@ -331,9 +304,6 @@ class Stash implements Service
         return $count;
     }
 
-    /**
-     * Purge file stores
-     */
     public function purgeFileStores(): void
     {
         foreach ($this->scanFileStoreDirectories() as $dir) {
@@ -342,8 +312,6 @@ class Stash implements Service
     }
 
     /**
-     * Load all file stores
-     *
      * @return Generator<string, Dir>
      */
     protected function scanFileStoreDirectories(): Generator
