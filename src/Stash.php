@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace DecodeLabs\Stash;
+namespace DecodeLabs;
 
 use DateInterval;
 use DecodeLabs\Archetype;
@@ -18,18 +18,26 @@ use DecodeLabs\Coercion;
 use DecodeLabs\Dovetail;
 use DecodeLabs\Dovetail\Config\Stash as StashConfig;
 use DecodeLabs\Exceptional;
+use DecodeLabs\Kingdom\ContainerAdapter;
+use DecodeLabs\Kingdom\Service;
+use DecodeLabs\Kingdom\ServiceTrait;
 use DecodeLabs\Monarch;
-use DecodeLabs\Stash;
+use DecodeLabs\Stash\Config;
+use DecodeLabs\Stash\Driver;
+use DecodeLabs\Stash\FileStore;
 use DecodeLabs\Stash\FileStore\Generic as GenericFileStore;
+use DecodeLabs\Stash\Store;
 use DecodeLabs\Stash\Store\Generic as GenericStore;
-use DecodeLabs\Veneer;
+use DecodeLabs\Stash\Item;
 use Generator;
 use ReflectionClass;
 use Stringable;
 use Throwable;
 
-class Context
+class Stash implements Service
 {
+    use ServiceTrait;
+
     /**
      * @var list<string>
      */
@@ -51,28 +59,24 @@ class Context
     protected ?string $defaultPrefix = null;
 
 
-    /**
-     * Set config
-     */
-    public function setConfig(
-        ?Config $config
-    ): void {
-        $this->config = $config;
-    }
-
-    /**
-     * Get config
-     */
-    public function getConfig(): ?Config
-    {
+    public static function provideService(
+        ContainerAdapter $container
+    ): static {
         if (
-            $this->config === null &&
+            !$container->has(Config::class) &&
             class_exists(Dovetail::class)
         ) {
-            $this->config = StashConfig::load();
+            $container->setType(Config::class, StashConfig::class);
         }
 
-        return $this->config;
+        return $container->getOrCreate(static::class);
+    }
+
+    public function __construct(
+        protected(set) Archetype $archetype,
+        ?Config $config = null
+    ) {
+        $this->config = $config;
     }
 
 
@@ -112,32 +116,32 @@ class Context
 
         $driver = $this->loadDriverFor($namespace);
 
-        try {
-            $class = Archetype::resolve(Store::class, $namespace);
-        } catch (ArchetypeException $e) {
+        $class = $this->archetype->tryResolve(Store::class, $namespace);
+
+        if ($class === null) {
             $class = GenericStore::class;
         }
 
         $store = new $class($namespace, $driver);
 
-        if ($config = $this->getConfig()) {
+        if ($this->config) {
             // Pile up policy
-            if (null !== ($policy = $config->getPileUpPolicy($namespace))) {
+            if (null !== ($policy = $this->config->getPileUpPolicy($namespace))) {
                 $store->setPileUpPolicy($policy);
             }
 
             // Preempt time
-            if (null !== ($time = $config->getPreemptTime($namespace))) {
+            if (null !== ($time = $this->config->getPreemptTime($namespace))) {
                 $store->setPreemptTime($time);
             }
 
             // Sleep time
-            if (null !== ($time = $config->getSleepTime($namespace))) {
+            if (null !== ($time = $this->config->getSleepTime($namespace))) {
                 $store->setSleepTime($time);
             }
 
             // Sleep attempts
-            if (null !== ($attempts = $config->getSleepAttempts($namespace))) {
+            if (null !== ($attempts = $this->config->getSleepAttempts($namespace))) {
                 $store->setSleepAttempts($attempts);
             }
         }
@@ -161,7 +165,7 @@ class Context
         $driver = $this->loadDriverFor($namespace, stealth: true);
 
         try {
-            $class = Archetype::resolve(Store::class, $namespace);
+            $class = $this->archetype->resolve(Store::class, $namespace);
         } catch (ArchetypeException $e) {
             $class = GenericStore::class;
         }
@@ -181,7 +185,7 @@ class Context
 
         if (
             !$stealth &&
-            (null !== ($driverName = $this->getConfig()?->getDriverFor($namespace)))
+            (null !== ($driverName = $this->config?->getDriverFor($namespace)))
         ) {
             array_unshift($drivers, $driverName);
         }
@@ -199,7 +203,7 @@ class Context
             }
         }
 
-        throw Exceptional::ComponentUnavailable(
+        throw Exceptional::{'./Stash/ComponentUnavailable'}(
             message: 'No cache drivers available for namespace: ' . $namespace
         );
     }
@@ -211,19 +215,17 @@ class Context
         string $name,
         bool $stealth = false
     ): ?Driver {
-        $class = Archetype::resolve(Driver::class, $name);
+        $class = $this->archetype->resolve(Driver::class, $name);
 
         if (!$stealth) {
-            $config = $this->getConfig();
-
             if (
                 !$class::isAvailable() ||
-                !($config?->isDriverEnabled($name) ?? true)
+                !($this->config?->isDriverEnabled($name) ?? true)
             ) {
                 return null;
             }
 
-            $settings = $config?->getDriverSettings($name) ?? [];
+            $settings = $this->config?->getDriverSettings($name) ?? [];
         } else {
             if (!$class::isAvailable()) {
                 return null;
@@ -239,7 +241,7 @@ class Context
             $settings['prefix'] = $this->defaultPrefix;
         }
 
-        return new $class($settings);
+        return new $class($this, $settings);
     }
 
 
@@ -248,7 +250,7 @@ class Context
      */
     public function purge(): void
     {
-        $drivers = ($this->getConfig()?->getAllDrivers() ?? []);
+        $drivers = ($this->config?->getAllDrivers() ?? []);
         $drivers[] = (new ReflectionClass($this->loadDriverFor('default')))->getShortName();
         $drivers = array_unique($drivers);
 
@@ -290,13 +292,12 @@ class Context
         }
 
         try {
-            $class = Archetype::resolve(FileStore::class, $namespace);
+            $class = $this->archetype->resolve(FileStore::class, $namespace);
         } catch (ArchetypeException $e) {
             $class = GenericFileStore::class;
         }
 
-        $config = $this->getConfig();
-        $settings = $config?->getFileStoreSettings($namespace);
+        $settings = $this->config?->getFileStoreSettings($namespace);
 
         if (
             !isset($settings['prefix']) &&
@@ -347,8 +348,8 @@ class Context
      */
     protected function scanFileStoreDirectories(): Generator
     {
-        $dir = Atlas::dir(
-            Monarch::$paths->localData . '/stash/fileStore/'
+        $dir = Atlas::getDir(
+            Monarch::getPaths()->localData . '/stash/fileStore/'
         );
 
         $dirs = [];
@@ -361,9 +362,7 @@ class Context
         }
 
         // Config
-        $config = $this->getConfig();
-
-        foreach ($config?->getAllFileStoreSettings() ?? [] as $name => $settings) {
+        foreach ($this->config?->getAllFileStoreSettings() ?? [] as $name => $settings) {
             if (
                 !isset($settings['path']) ||
                 empty($settings['path'])
@@ -371,7 +370,7 @@ class Context
                 continue;
             }
 
-            $dir = Atlas::dir(Coercion::asString($settings['path']));
+            $dir = Atlas::getDir(Coercion::asString($settings['path']));
 
             if (
                 $dir->exists() &&
@@ -382,10 +381,3 @@ class Context
         }
     }
 }
-
-
-// Veneer
-Veneer\Manager::getGlobalManager()->register(
-    Context::class,
-    Stash::class
-);

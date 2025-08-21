@@ -27,19 +27,20 @@ Caches are namespaced to allow for clean separation of data between usage domain
 ```php
 use DecodeLabs\Stash;
 
-$myCache = Stash::load('MyCache');
+$stash = new Stash();
+$myCache = $stash->load('MyCache');
 
-if(!$cache->has('myValue')) {
-    $cache->set('myValue', [1, 2, 3]);
+if(!$myCache->has('myValue')) {
+    $myCache->set('myValue', [1, 2, 3]);
 }
 
 $total = 0;
 
-foreach($cache->get('myValue', []) as $number) {
+foreach($myCache->get('myValue', []) as $number) {
     $total += $number;
 }
 
-$cache->delete('myValue');
+$myCache->delete('myValue');
 ```
 
 ### Fetch
@@ -119,7 +120,7 @@ interface Config
 Then tell Stash about your configuration provider:
 
 ```php
-Stash::setConfig(new MyConfig());
+$stash->setConfig(new MyConfig());
 ```
 
 ## Custom Store methods
@@ -129,7 +130,6 @@ By default, newly loaded caches use a generic Store implementation, however if y
 ```php
 namespace MyApp;
 
-use DecodeLabs\Archetype;
 use DecodeLabs\Stash\Store;
 use DecodeLabs\Stash\Store\Generic;
 
@@ -144,9 +144,9 @@ class MyCache extends Generic
     }
 }
 
-Archetype::map(Store::class, namespace::class);
+$archetype->map(Store::class, namespace::class);
 
-$myCache = Stash::load('MyCache'); // Will now use MyApp\MyCache
+$myCache = $stash->load('MyCache'); // Will now use MyApp\MyCache
 ```
 
 

@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace DecodeLabs\Stash\Driver;
 
 use DecodeLabs\Coercion;
+use DecodeLabs\Stash;
 use DecodeLabs\Stash\Driver;
 use Memcached as Client;
 
@@ -32,6 +33,7 @@ class Memcache implements Driver
      * Init with settings
      */
     public function __construct(
+        Stash $context,
         array $settings
     ) {
         $this->generatePrefix(

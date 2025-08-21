@@ -11,6 +11,7 @@ namespace DecodeLabs\Stash\Driver;
 
 use APCuIterator;
 use DecodeLabs\Coercion;
+use DecodeLabs\Stash;
 use DecodeLabs\Stash\Driver;
 
 if (!defined('APC_ITER_KEY')) {
@@ -21,9 +22,6 @@ class Apcu implements Driver
 {
     use KeyGenTrait;
 
-    /**
-     * Can this be loaded?
-     */
     public static function isAvailable(): bool
     {
         return extension_loaded('apcu');
@@ -33,6 +31,7 @@ class Apcu implements Driver
      * Init with settings
      */
     public function __construct(
+        Stash $context,
         array $settings
     ) {
         $this->generatePrefix(
@@ -40,9 +39,6 @@ class Apcu implements Driver
         );
     }
 
-    /**
-     * Store item data
-     */
     public function store(
         string $namespace,
         string $key,
@@ -63,9 +59,6 @@ class Apcu implements Driver
         );
     }
 
-    /**
-     * Fetch item data
-     */
     public function fetch(
         string $namespace,
         string $key
@@ -81,9 +74,6 @@ class Apcu implements Driver
         return $success ? $output : null;
     }
 
-    /**
-     * Remove item from store
-     */
     public function delete(
         string $namespace,
         string $key
@@ -107,9 +97,6 @@ class Apcu implements Driver
         return true;
     }
 
-    /**
-     * Clear all values from store
-     */
     public function clearAll(
         string $namespace
     ): bool {
@@ -134,9 +121,6 @@ class Apcu implements Driver
 
 
 
-    /**
-     * Save a lock for a key
-     */
     public function storeLock(
         string $namespace,
         string $key,
@@ -149,9 +133,6 @@ class Apcu implements Driver
         );
     }
 
-    /**
-     * Get a lock expiry for a key
-     */
     public function fetchLock(
         string $namespace,
         string $key
@@ -167,9 +148,6 @@ class Apcu implements Driver
         return $success ? $output : null;
     }
 
-    /**
-     * Remove a lock
-     */
     public function deleteLock(
         string $namespace,
         string $key
@@ -179,9 +157,6 @@ class Apcu implements Driver
     }
 
 
-    /**
-     * Count items
-     */
     public function count(
         string $namespace
     ): int {
@@ -198,9 +173,7 @@ class Apcu implements Driver
     }
 
 
-    /**
-     * Get list of keys
-     */
+
     public function getKeys(
         string $namespace
     ): array {
@@ -218,10 +191,8 @@ class Apcu implements Driver
 
 
     /**
-     * Get normalized APCU cache info
-     *
-     * @return array<int, array<string, mixed>>
-     * @phpstan-return array<int, array{
+     * @return array<int,array<string, mixed>>
+     * @return array<int,array{
      *      info: string
      * }>
      */
@@ -232,8 +203,8 @@ class Apcu implements Driver
 
         if (isset($info['cache_list'])) {
             /**
-             * @var array<int, array<string, mixed>> $output
-             * @phpstan-var array<int, array{
+             * @var array<int,array<string, mixed>> $output
+             * @var array<int,array{
              *     info: string,
              *     key: string
              * }> $output
@@ -256,9 +227,6 @@ class Apcu implements Driver
     }
 
 
-    /**
-     * Delete EVERYTHING in this store
-     */
     public function purge(): void
     {
         apcu_clear_cache();

@@ -1,9 +1,10 @@
 <?php
 
 /**
- * This file is part of the Decode r7 framework
+ * @package Stash
  * @license http://opensource.org/licenses/MIT
  */
+
 declare(strict_types=1);
 
 namespace DecodeLabs\Genesis\Build\Task;
@@ -21,8 +22,9 @@ class StashPurge implements PostActivation
         get => 'Purging caches';
     }
 
-    public function __construct()
-    {
+    public function __construct(
+        protected Stash $stash
+    ) {
     }
 
     public function run(
@@ -34,6 +36,7 @@ class StashPurge implements PostActivation
         }
 
         $session->{'.green'}('Stash');
-        Stash::purge();
+
+        $this->stash->purge();
     }
 }

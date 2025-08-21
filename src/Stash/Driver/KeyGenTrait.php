@@ -28,7 +28,7 @@ trait KeyGenTrait
      * Generate list of keys to delete
      *
      * @return array<string,mixed>
-     * @phpstan-return array{'normal': ?string, 'children': bool, 'self': bool}
+     * @return array{'normal': ?string, 'children': bool, 'self': bool}
      */
     protected function parseKey(
         string $namespace,

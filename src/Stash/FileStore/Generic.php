@@ -46,7 +46,7 @@ class Generic implements FileStore
 
         // Path
         if (null === ($path = Coercion::tryString($settings['path'] ?? null))) {
-            $path = Monarch::$paths->localData . '/stash/fileStore/' . $this->normalizeKey($namespace);
+            $path = Monarch::getPaths()->localData . '/stash/fileStore/' . $this->normalizeKey($namespace);
         }
 
         $this->dir = new Dir($path);
@@ -421,7 +421,7 @@ class Generic implements FileStore
     /**
      * Normalize input file
      *
-     * @phpstan-return ($file is null ? File : null)
+     * @return ($file is null ? File : null)
      */
     protected function normalizeFile(
         string|File|null $file

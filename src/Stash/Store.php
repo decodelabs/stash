@@ -192,7 +192,7 @@ interface Store extends
     public function pileUpIgnore(): static;
 
     /**
-     * @phpstan-param positive-int|null $time
+     * @param positive-int|null $time
      * @return $this
      */
     public function pileUpPreempt(
@@ -200,8 +200,8 @@ interface Store extends
     ): static;
 
     /**
-     * @phpstan-param positive-int|null $time
-     * @phpstan-param positive-int|null $attempts
+     * @param positive-int|null $time
+     * @param positive-int|null $attempts
      * @return $this
      */
     public function pileUpSleep(
@@ -222,7 +222,7 @@ interface Store extends
     public function getPileUpPolicy(): PileUpPolicy;
 
     /**
-     * @phpstan-param positive-int $time
+     * @param positive-int $time
      * @return $this
      */
     public function setPreemptTime(
@@ -230,12 +230,12 @@ interface Store extends
     ): static;
 
     /**
-     * @phpstan-return positive-int
+     * @return positive-int
      */
     public function getPreemptTime(): int;
 
     /**
-     * @phpstan-param positive-int $time
+     * @param positive-int $time
      * @return $this
      */
     public function setSleepTime(
@@ -243,12 +243,12 @@ interface Store extends
     ): static;
 
     /**
-     * @phpstan-return positive-int
+     * @return positive-int
      */
     public function getSleepTime(): int;
 
     /**
-     * @phpstan-param positive-int $attempts
+     * @param positive-int $attempts
      * @return $this
      */
     public function setSleepAttempts(
@@ -256,7 +256,7 @@ interface Store extends
     ): static;
 
     /**
-     * @phpstan-return positive-int
+     * @return positive-int
      */
     public function getSleepAttempts(): int;
 }

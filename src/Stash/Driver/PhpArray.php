@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace DecodeLabs\Stash\Driver;
 
 use DecodeLabs\Coercion;
+use DecodeLabs\Stash;
 use DecodeLabs\Stash\Driver;
 
 class PhpArray implements Driver
@@ -17,8 +18,7 @@ class PhpArray implements Driver
     use KeyGenTrait;
 
     /**
-     * @var array<string,array<mixed>>
-     * @phpstan-var array<string,array{0: mixed, 1: ?int}>
+     * @var array<string,array{0: mixed, 1: ?int}>
      */
     protected array $values = [];
 
@@ -41,6 +41,7 @@ class PhpArray implements Driver
      * Init with settings
      */
     public function __construct(
+        Stash $context,
         array $settings
     ) {
         $this->generatePrefix(

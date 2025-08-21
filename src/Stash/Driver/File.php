@@ -13,6 +13,7 @@ use DecodeLabs\Atlas\Dir\Local as Dir;
 use DecodeLabs\Atlas\File as FileInterface;
 use DecodeLabs\Coercion;
 use DecodeLabs\Monarch;
+use DecodeLabs\Stash;
 use DecodeLabs\Stash\Driver;
 use ReflectionClass;
 use Throwable;
@@ -42,6 +43,7 @@ class File implements Driver
      * Init with settings
      */
     public function __construct(
+        Stash $context,
         array $settings
     ) {
         $this->generatePrefix(
@@ -52,7 +54,7 @@ class File implements Driver
         // Path
         if (null === ($path = Coercion::tryString($settings['path'] ?? null))) {
             $name = lcfirst((new ReflectionClass($this))->getShortName());
-            $path = Monarch::$paths->localData . '/stash/cache@' . $name;
+            $path = Monarch::getPaths()->localData . '/stash/cache@' . $name;
         }
 
         $this->dir = new Dir($path);

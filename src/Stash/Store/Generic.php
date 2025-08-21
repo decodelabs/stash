@@ -37,17 +37,17 @@ class Generic implements Store
     protected PileUpPolicy $pileUpPolicy = PileUpPolicy::Preempt;
 
     /**
-     * @phpstan-var positive-int
+     * @var positive-int
      */
     protected int $preemptTime = 30;
 
     /**
-     * @phpstan-var positive-int
+     * @var positive-int
      */
     protected int $sleepTime = 500;
 
     /**
-     * @phpstan-var positive-int
+     * @var positive-int
      */
     protected int $sleepAttempts = 10;
 

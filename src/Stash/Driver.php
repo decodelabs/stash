@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Stash;
 
+use DecodeLabs\Stash;
+
 interface Driver
 {
     public static function isAvailable(): bool;
@@ -17,6 +19,7 @@ interface Driver
      * @param array<string,mixed> $settings
      */
     public function __construct(
+        Stash $context,
         array $settings
     );
 

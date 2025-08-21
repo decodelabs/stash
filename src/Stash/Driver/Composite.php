@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Stash\Driver;
 
-use DecodeLabs\Archetype;
+use DecodeLabs\Stash;
 use DecodeLabs\Stash\Driver;
 
 class Composite implements Driver
@@ -31,10 +31,11 @@ class Composite implements Driver
      * Init with drivers
      */
     public function __construct(
+        Stash $context,
         array $settings
     ) {
         foreach ($settings as $name => $driverSettings) {
-            $class = Archetype::resolve(Driver::class, $name);
+            $class = $context->archetype->resolve(Driver::class, $name);
 
             if (!$class::isAvailable()) {
                 continue;

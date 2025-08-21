@@ -10,8 +10,8 @@ declare(strict_types=1);
 namespace DecodeLabs\Stash\Driver;
 
 use DecodeLabs\Coercion;
+use DecodeLabs\Stash;
 use DecodeLabs\Stash\Driver;
-
 use Predis\Client;
 use Predis\ClientInterface;
 
@@ -34,6 +34,7 @@ class Predis implements Driver
      * Init with settings
      */
     public function __construct(
+        Stash $context,
         array $settings
     ) {
         $this->generatePrefix(
