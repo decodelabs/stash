@@ -26,7 +26,7 @@
     "require-dev": {
         "decodelabs/commandment": "^0.3.0",
         "decodelabs/dovetail": "^0.3",
-        "decodelabs/genesis": "^0.13",
+        "decodelabs/genesis": "^0.14",
         "decodelabs/phpstan-decodelabs": "^0.7",
 
         "ext-memcached": "^3.2",
@@ -36,7 +36,7 @@
     },
     "conflict": {
         "decodelabs/dovetail": "<0.3",
-        "decodelabs/genesis": "<0.13"
+        "decodelabs/genesis": "<0.14"
     },
     "suggest": {
         "decodelabs/dovetail": "For dovetail config integration",
@@ -68,7 +68,8 @@
     },
     "config": {
         "allow-plugins": {
-            "phpstan/extension-installer": true
+            "phpstan/extension-installer": true,
+            "decodelabs/genesis": true
         }
     }
 }
