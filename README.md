@@ -112,6 +112,30 @@ $stash = new Stash(new DriverManager(
 ```
 You may pass any number of `DriverConfig`, `NamespaceConfig` and `FileStoreConfig` objects to the `DriverManager` to configure the drivers and stores - the `DriverManager` will use the most relevant driver for each namespace.
 
+If you're using `Kingdom` to manage your application, it is advisable to provide a `DriverManager` to your container and specify the drivers you want to use during initialization.
+
+```php
+use DecodeLabs\Fabric\Kingdom as FabricKingdom;
+use DecodeLabs\Kingdom\ContainerAdapter;
+use DecodeLabs\Stash\DriverManager;
+use DecodeLabs\Stash\DriverConfig\Redis as RedisConfig;
+
+class Kingdom extends FabricKingdom
+{
+    public function initialize(): void
+    {
+        parent::initialize();
+
+        $this->container->setFactory(
+            DriverManager::class,
+            fn () => new DriverManager(
+                new RedisConfig('localRedis')
+            )
+        );
+    }
+}
+```
+
 ## Custom Store methods
 
 By default, newly loaded caches use a generic Store implementation, however if you require custom methods for domain-oriented data access, you can implement your own Store classes using a custom [Archetype](https://github.com/decodelabs/archetype) `Resolver`.
