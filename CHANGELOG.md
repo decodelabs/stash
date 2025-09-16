@@ -5,12 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Unreleased
+--
+
+---
+
+### [v0.8.0](https://github.com/decodelabs/stash/commits/v0.8.0) - 16th September 2025
+
 - Switched to DriverManager for configuration
 - Removed Dovetail dependency
 - Removed Config interface
 - Improved driver configuration
 - Improved file store configuration
 - Simplified Service management interface
+
+[Full list of changes](https://github.com/decodelabs/stash/compare/v0.7.2...v0.8.0)
 
 ---
 
