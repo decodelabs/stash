@@ -11,10 +11,10 @@ namespace DecodeLabs\Stash\Driver;
 
 use DecodeLabs\Atlas\Dir\Local as Dir;
 use DecodeLabs\Atlas\File as FileInterface;
-use DecodeLabs\Coercion;
 use DecodeLabs\Monarch;
-use DecodeLabs\Stash;
 use DecodeLabs\Stash\Driver;
+use DecodeLabs\Stash\DriverConfig\Fallback as FallbackConfig;
+use DecodeLabs\Stash\DriverConfig\File as FileConfig;
 use ReflectionClass;
 use Throwable;
 
@@ -37,16 +37,17 @@ class File implements Driver
 
 
     public function __construct(
-        Stash $context,
-        array $settings
+        FallbackConfig|FileConfig $config
     ) {
-        $this->generatePrefix(
-            Coercion::tryString($settings['prefix'] ?? null)
-        );
-
+        $this->generatePrefix($config->prefix);
 
         // Path
-        if (null === ($path = Coercion::tryString($settings['path'] ?? null))) {
+        if (
+            $config instanceof FileConfig &&
+            $config->path !== null
+        ) {
+            $path = $config->path;
+        } else {
             $name = lcfirst((new ReflectionClass($this))->getShortName());
             $path = Monarch::getPaths()->localData . '/stash/cache@' . $name;
         }
@@ -54,12 +55,14 @@ class File implements Driver
         $this->dir = new Dir($path);
 
         // Permissions
-        if (isset($settings['dirPermissions'])) {
-            $this->dirPermissions = Coercion::asInt($settings['dirPermissions']);
-        }
+        if ($config instanceof FileConfig) {
+            if ($config->dirPermissions !== null) {
+                $this->dirPermissions = $config->dirPermissions;
+            }
 
-        if (isset($settings['filePermissions'])) {
-            $this->filePermissions = Coercion::asInt($settings['filePermissions']);
+            if ($config->filePermissions !== null) {
+                $this->filePermissions = $config->filePermissions;
+            }
         }
     }
 

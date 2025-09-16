@@ -25,7 +25,6 @@
     },
     "require-dev": {
         "decodelabs/commandment": "^0.3.0",
-        "decodelabs/dovetail": "^0.3",
         "decodelabs/genesis": "^0.14",
         "decodelabs/phpstan-decodelabs": "^0.7",
 
@@ -35,7 +34,6 @@
         "predis/predis": "^2.4"
     },
     "conflict": {
-        "decodelabs/dovetail": "<0.3",
         "decodelabs/genesis": "<0.14"
     },
     "suggest": {
@@ -57,7 +55,6 @@
         },
         "classmap": [
             "src/Commandment/",
-            "src/Dovetail/",
             "src/Stash.php"
         ]
     },

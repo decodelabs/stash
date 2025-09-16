@@ -19,6 +19,7 @@ use DecodeLabs\Coercion;
 use DecodeLabs\Dictum;
 use DecodeLabs\Monarch;
 use DecodeLabs\Stash\FileStore;
+use DecodeLabs\Stash\FileStoreConfig;
 use Stringable;
 use Throwable;
 
@@ -33,31 +34,26 @@ class Generic implements FileStore
     public int $dirPermissions = 0770;
     public int $filePermissions = 0660;
 
-    /**
-     * @param array<string,mixed> $settings
-     */
     public function __construct(
-        string $namespace,
-        array $settings = []
+        FileStoreConfig $config
     ) {
-        $this->namespace = $namespace;
-        $this->prefix = Coercion::asString($settings['prefix'] ?? $this->prefix);
-
+        $this->namespace = $config->namespace;
+        $this->prefix = $config->prefix ?? $this->prefix;
 
         // Path
-        if (null === ($path = Coercion::tryString($settings['path'] ?? null))) {
-            $path = Monarch::getPaths()->localData . '/stash/fileStore/' . $this->normalizeKey($namespace);
+        if (null === ($path = $config->path)) {
+            $path = Monarch::getPaths()->localData . '/stash/fileStore/' . $this->normalizeKey($this->namespace);
         }
 
         $this->dir = new Dir($path);
 
         // Permissions
-        if (isset($settings['dirPermissions'])) {
-            $this->dirPermissions = Coercion::asInt($settings['dirPermissions']);
+        if ($config->dirPermissions !== null) {
+            $this->dirPermissions = $config->dirPermissions;
         }
 
-        if (isset($settings['filePermissions'])) {
-            $this->filePermissions = Coercion::asInt($settings['filePermissions']);
+        if ($config->filePermissions !== null) {
+            $this->filePermissions = $config->filePermissions;
         }
     }
 

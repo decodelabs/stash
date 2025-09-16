@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Stash\Driver;
 
-use DecodeLabs\Stash;
 use DecodeLabs\Stash\Driver;
 
 class BlackHole implements Driver
@@ -19,11 +18,8 @@ class BlackHole implements Driver
         return true;
     }
 
-    public function __construct(
-        Stash $context,
-        array $settings
-    ) {
-        unset($settings);
+    public function __construct()
+    {
     }
 
     public function store(

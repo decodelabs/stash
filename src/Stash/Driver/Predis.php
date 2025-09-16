@@ -10,8 +10,8 @@ declare(strict_types=1);
 namespace DecodeLabs\Stash\Driver;
 
 use DecodeLabs\Coercion;
-use DecodeLabs\Stash;
 use DecodeLabs\Stash\Driver;
+use DecodeLabs\Stash\DriverConfig\Redis as RedisConfig;
 use Predis\Client;
 use Predis\ClientInterface;
 
@@ -27,12 +27,34 @@ class Predis implements Driver
     }
 
     public function __construct(
-        Stash $context,
-        array $settings
+        RedisConfig $config
     ) {
-        $this->generatePrefix(
-            Coercion::tryString($settings['prefix'] ?? null)
-        );
+        $this->generatePrefix($config->prefix);
+
+        $settings = [
+            'host' => $config->host,
+            'port' => $config->port,
+        ];
+
+        if ($config->isSocket()) {
+            $settings['scheme'] = 'unix';
+        }
+
+        if ($config->timeout !== null) {
+            $settings['connectTimeout'] = $config->timeout;
+        }
+
+        if ($config->password !== null) {
+            if ($config->username !== null) {
+                $settings['auth'] = [$config->username, $config->password];
+            } else {
+                $settings['auth'] = $config->password;
+            }
+        }
+
+        if ($config->database !== null) {
+            $settings['database'] = $config->database;
+        }
 
         $this->client = new Client($settings);
     }

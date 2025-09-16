@@ -15,6 +15,7 @@ use DecodeLabs\Coercion;
 use DecodeLabs\Exceptional;
 use DecodeLabs\Stash\Driver;
 use DecodeLabs\Stash\Item;
+use DecodeLabs\Stash\NamespaceConfig;
 use DecodeLabs\Stash\PileUpPolicy;
 use DecodeLabs\Stash\Store;
 use Psr\Cache\CacheItemInterface as CacheItem;
@@ -28,7 +29,6 @@ use Throwable;
 class Generic implements Store
 {
     protected string $namespace;
-
     /**
      * @var array<string,Item<T>>
      */
@@ -51,17 +51,28 @@ class Generic implements Store
      */
     protected int $sleepAttempts = 10;
 
-    protected Driver $driver;
-
-
-
 
     public function __construct(
-        string $namespace,
-        Driver $driver
+        NamespaceConfig $config,
+        protected Driver $driver
     ) {
-        $this->driver = $driver;
-        $this->namespace = $namespace;
+        $this->namespace = $config->namespace;
+
+        if ($config->pileUpPolicy !== null) {
+            $this->pileUpPolicy = $config->pileUpPolicy;
+        }
+
+        if ($config->preemptTime !== null) {
+            $this->preemptTime = $config->preemptTime;
+        }
+
+        if ($config->sleepTime !== null) {
+            $this->sleepTime = $config->sleepTime;
+        }
+
+        if ($config->sleepAttempts !== null) {
+            $this->sleepAttempts = $config->sleepAttempts;
+        }
     }
 
 
@@ -75,7 +86,6 @@ class Generic implements Store
     {
         return $this->namespace;
     }
-
 
 
     /**

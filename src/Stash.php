@@ -10,33 +10,23 @@ declare(strict_types=1);
 namespace DecodeLabs;
 
 use DateInterval;
-use DecodeLabs\Archetype\NotFoundException as ArchetypeException;
 use DecodeLabs\Atlas\Dir;
-use DecodeLabs\Dovetail\Config\Stash as StashConfig;
-use DecodeLabs\Kingdom\ContainerAdapter;
 use DecodeLabs\Kingdom\Service;
 use DecodeLabs\Kingdom\ServiceTrait;
 use DecodeLabs\Stash\Config;
-use DecodeLabs\Stash\Driver;
+use DecodeLabs\Stash\DriverManager;
 use DecodeLabs\Stash\FileStore;
 use DecodeLabs\Stash\FileStore\Generic as GenericFileStore;
 use DecodeLabs\Stash\Store;
 use DecodeLabs\Stash\Store\Generic as GenericStore;
 use Generator;
-use ReflectionClass;
 use Stringable;
-use Throwable;
 
 class Stash implements Service
 {
     use ServiceTrait;
 
-    /**
-     * @var list<string>
-     */
-    protected const array Drivers = [
-        'Memcache', 'Redis', 'Apcu', 'Predis', 'PhpFile', 'PhpArray'
-    ];
+    public ?string $defaultPrefix = null;
 
     /**
      * @var array<string,Store<mixed>>
@@ -48,47 +38,11 @@ class Stash implements Service
      */
     protected array $fileStores = [];
 
-    protected ?Config $config = null;
-    protected ?string $defaultPrefix = null;
-
-
-    public static function provideService(
-        ContainerAdapter $container
-    ): static {
-        if (
-            !$container->has(Config::class) &&
-            class_exists(Dovetail::class)
-        ) {
-            $container->setType(Config::class, StashConfig::class);
-        }
-
-        return $container->getOrCreate(static::class);
-    }
-
     public function __construct(
         protected(set) Archetype $archetype,
-        ?Config $config = null
+        protected(set) DriverManager $driverManager,
     ) {
-        $this->config = $config;
     }
-
-
-    /**
-     * @return $this
-     */
-    public function setDefaultPrefix(
-        ?string $prefix
-    ): static {
-        $this->defaultPrefix = $prefix;
-        return $this;
-    }
-
-    public function getDefaultPrefix(): ?string
-    {
-        return $this->defaultPrefix;
-    }
-
-
 
     /**
      * @return Store<mixed>
@@ -100,156 +54,23 @@ class Stash implements Service
             return $this->caches[$namespace];
         }
 
-        $driver = $this->loadDriverFor($namespace);
+        $storeClass = $this->archetype->tryResolve(Store::class, $namespace) ?? GenericStore::class;
+        $config = $this->driverManager->getNamespaceConfig($namespace);
+        $driver = $this->driverManager->getDriverForNamespace($config, $this->defaultPrefix);
 
-        $class = $this->archetype->tryResolve(Store::class, $namespace);
-
-        if ($class === null) {
-            $class = GenericStore::class;
-        }
-
-        $store = new $class($namespace, $driver);
-
-        if ($this->config) {
-            // Pile up policy
-            if (null !== ($policy = $this->config->getPileUpPolicy($namespace))) {
-                $store->setPileUpPolicy($policy);
-            }
-
-            // Preempt time
-            if (null !== ($time = $this->config->getPreemptTime($namespace))) {
-                $store->setPreemptTime($time);
-            }
-
-            // Sleep time
-            if (null !== ($time = $this->config->getSleepTime($namespace))) {
-                $store->setSleepTime($time);
-            }
-
-            // Sleep attempts
-            if (null !== ($attempts = $this->config->getSleepAttempts($namespace))) {
-                $store->setSleepAttempts($attempts);
-            }
-        }
-
-        $this->caches[$namespace] = $store;
-        return $store;
-    }
-
-    /**
-     * @return Store<mixed>
-     */
-    public function loadStealth(
-        string $namespace
-    ): Store {
-        if (isset($this->caches[$namespace])) {
-            return $this->caches[$namespace];
-        }
-
-        $driver = $this->loadDriverFor($namespace, stealth: true);
-
-        try {
-            $class = $this->archetype->resolve(Store::class, $namespace);
-        } catch (ArchetypeException $e) {
-            $class = GenericStore::class;
-        }
-
-        return new $class($namespace, $driver);
-    }
-
-
-    public function loadDriverFor(
-        string $namespace,
-        bool $stealth = false
-    ): Driver {
-        $drivers = self::Drivers;
-
-        if (
-            !$stealth &&
-            (null !== ($driverName = $this->config?->getDriverFor($namespace)))
-        ) {
-            array_unshift($drivers, $driverName);
-        }
-
-        foreach ($drivers as $name) {
-            try {
-                if ($driver = $this->loadDriver($name, $stealth)) {
-                    return $driver;
-                }
-            } catch (ArchetypeException $e) {
-                // Ignore
-                continue;
-            } catch (Throwable $e) {
-                Monarch::logException($e);
-            }
-        }
-
-        throw Exceptional::{'./Stash/ComponentUnavailable'}(
-            message: 'No cache drivers available for namespace: ' . $namespace
-        );
-    }
-
-    public function loadDriver(
-        string $name,
-        bool $stealth = false
-    ): ?Driver {
-        $class = $this->archetype->resolve(Driver::class, $name);
-
-        if (!$stealth) {
-            if (
-                !$class::isAvailable() ||
-                !($this->config?->isDriverEnabled($name) ?? true)
-            ) {
-                return null;
-            }
-
-            $settings = $this->config?->getDriverSettings($name) ?? [];
-        } else {
-            if (!$class::isAvailable()) {
-                return null;
-            }
-
-            $settings = [];
-        }
-
-        if (
-            !isset($settings['prefix']) &&
-            $this->defaultPrefix !== null
-        ) {
-            $settings['prefix'] = $this->defaultPrefix;
-        }
-
-        return new $class($this, $settings);
+        return $this->caches[$config->namespace] = new $storeClass($config, $driver);
     }
 
 
     public function purge(): void
     {
-        $drivers = ($this->config?->getAllDrivers() ?? []);
-        $drivers[] = (new ReflectionClass($this->loadDriverFor('default')))->getShortName();
-        $drivers = array_unique($drivers);
+        $this->driverManager->ensureDefaultDrivers($this->defaultPrefix);
 
-        foreach ($drivers as $name) {
-            $this->purgeDriver($name);
+        foreach ($this->driverManager->driverConfigs as $config) {
+            $driver = $this->driverManager->getDriver($config);
+            $driver->purge();
         }
     }
-
-
-    public function purgeDriver(
-        string $name
-    ): void {
-        try {
-            if (!$driver = $this->loadDriver($name)) {
-                return;
-            }
-        } catch (Throwable $e) {
-            Monarch::logException($e);
-            return;
-        }
-
-        $driver->purge();
-    }
-
 
 
 
@@ -260,22 +81,11 @@ class Stash implements Service
             return $this->fileStores[$namespace];
         }
 
-        try {
-            $class = $this->archetype->resolve(FileStore::class, $namespace);
-        } catch (ArchetypeException $e) {
-            $class = GenericFileStore::class;
-        }
+        $class = $this->archetype->tryResolve(FileStore::class, $namespace) ?? GenericFileStore::class;
+        $config = $this->driverManager->getFileStoreConfig($namespace);
+        $config->prefix ??= $this->defaultPrefix;
 
-        $settings = $this->config?->getFileStoreSettings($namespace);
-
-        if (
-            !isset($settings['prefix']) &&
-            $this->defaultPrefix !== null
-        ) {
-            $settings['prefix'] = $this->defaultPrefix;
-        }
-
-        return $this->fileStores[$namespace] = new $class($namespace, $settings);
+        return $this->fileStores[$namespace] = new $class($config);
     }
 
     public function pruneFileStores(
@@ -323,20 +133,9 @@ class Stash implements Service
         }
 
         // Config
-        foreach ($this->config?->getAllFileStoreSettings() ?? [] as $name => $settings) {
-            if (
-                !isset($settings['path']) ||
-                empty($settings['path'])
-            ) {
-                continue;
-            }
-
-            $dir = Atlas::getDir(Coercion::asString($settings['path']));
-
-            if (
-                $dir->exists() &&
-                !isset($dirs[(string)$dir])
-            ) {
+        foreach ($this->driverManager->fileStoreConfigs as $config) {
+            if ($config->path !== null) {
+                $dir = Atlas::getDir($dir);
                 yield (string)$dir => $dir;
             }
         }

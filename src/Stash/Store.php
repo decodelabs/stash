@@ -27,11 +27,8 @@ interface Store extends
     ArrayAccess,
     Countable
 {
-    /**
-     * @param non-empty-string $namespace
-     */
     public function __construct(
-        string $namespace,
+        NamespaceConfig $namespace,
         Driver $driver
     );
 

@@ -27,7 +27,9 @@ interface FileStore extends
     public int $dirPermissions { get; set; }
     public int $filePermissions { get; set; }
 
-
+    public function __construct(
+        FileStoreConfig $config
+    );
 
     public function set(
         string $key,

@@ -9,9 +9,8 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Stash\Driver;
 
-use DecodeLabs\Coercion;
-use DecodeLabs\Stash;
 use DecodeLabs\Stash\Driver;
+use DecodeLabs\Stash\DriverConfig\Fallback as FallbackConfig;
 
 class PhpArray implements Driver
 {
@@ -33,12 +32,9 @@ class PhpArray implements Driver
     }
 
     public function __construct(
-        Stash $context,
-        array $settings
+        ?FallbackConfig $config = null
     ) {
-        $this->generatePrefix(
-            Coercion::tryString($settings['prefix'] ?? null)
-        );
+        $this->generatePrefix($config?->prefix);
     }
 
     public function store(

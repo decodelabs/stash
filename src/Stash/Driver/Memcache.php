@@ -10,8 +10,8 @@ declare(strict_types=1);
 namespace DecodeLabs\Stash\Driver;
 
 use DecodeLabs\Coercion;
-use DecodeLabs\Stash;
 use DecodeLabs\Stash\Driver;
+use DecodeLabs\Stash\DriverConfig\Memcache as MemcacheConfig;
 use Memcached as Client;
 
 class Memcache implements Driver
@@ -26,22 +26,14 @@ class Memcache implements Driver
     }
 
     public function __construct(
-        Stash $context,
-        array $settings
+        MemcacheConfig $config
     ) {
-        $this->generatePrefix(
-            Coercion::tryString($settings['prefix'] ?? null)
-        );
-
+        $this->generatePrefix($config->prefix);
         $client = new Client();
 
-        if (is_array($settings['servers'] ?? null)) {
-            $client->addServers($settings['servers']);
-        } else {
-            $host = Coercion::tryString($settings['host'] ?? null) ?? '127.0.0.1';
-            $port = Coercion::tryInt($settings['port'] ?? null) ?? 11211;
-
-            $client->addServer($host, $port);
+        foreach ($config->servers as $server) {
+            [$host, $port] = explode(':', $server);
+            $client->addServer($host, Coercion::asInt($port));
         }
 
         $this->client = $client;

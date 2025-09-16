@@ -91,37 +91,26 @@ The following drivers are available out of the box:
 - PhpArray (in memory)
 - Blackhole (nothing stored)
 
-However, Stash uses [Archetype](https://github.com/decodelabs/archetype) to load driver classes so additional drivers may be provided by implementing your own `Resolver`.
+Stash uses [Archetype](https://github.com/decodelabs/archetype) to load driver classes so additional drivers may be provided by implementing your own `Resolver`.
 
-By default, Stash will use the best-fit driver for your environment, starting with Memcache, through Redis and APCu, and falling back on the File store.
+If no configuration is provided, Stash will attempt to use the best-fit driver for your environment, starting with Memcache, through Redis and APCu, and falling back on the File store.
 
+## Configuration
 
-### Configuration
-
-All drivers have default configuration to allow them to work out of the box, however Stash provides the ability to implement your own configuration loader so that you can control drivers and settings on a per-namespace basis
-
-Implement the following interface however your system requires; all nullable methods can just return null to use default configuration:
+Stash can be configured by passing a `DriverManager` to the constructor (or in your DI container):
 
 ```php
-interface Config
-{
-    public function getDriverFor(string $namespace): ?string;
-    public function isDriverEnabled(string $driver): bool;
-    public function getAllDrivers(): array;
-    public function getDriverSettings(string $driver): ?array;
+use DecodeLabs\Stash\DriverManager;
 
-    public function getPileUpPolicy(string $namespace): ?PileUpPolicy;
-    public function getPreemptTime(string $namespace): ?int;
-    public function getSleepTime(string $namespace): ?int;
-    public function getSleepAttempts(string $namespace): ?int;
-}
+$stash = new Stash(new DriverManager(
+    new RedisConfig('localRedis'),
+    new RedisConfig('anotherRedis', host: '123.456.789.000', port: 6379),
+    new MemcacheConfig('remoteMemcache', host: '123.456.789.000', port: 11211),
+    new NamespaceConfig('MyStore', driver: 'remoteMemcache'),
+    new FileStoreConfig('specialFileStore', path: '/tmp/stash/fileStore'),
+));
 ```
-
-Then tell Stash about your configuration provider:
-
-```php
-$stash->setConfig(new MyConfig());
-```
+You may pass any number of `DriverConfig`, `NamespaceConfig` and `FileStoreConfig` objects to the `DriverManager` to configure the drivers and stores - the `DriverManager` will use the most relevant driver for each namespace.
 
 ## Custom Store methods
 

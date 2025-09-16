@@ -10,9 +10,8 @@ declare(strict_types=1);
 namespace DecodeLabs\Stash\Driver;
 
 use APCuIterator;
-use DecodeLabs\Coercion;
-use DecodeLabs\Stash;
 use DecodeLabs\Stash\Driver;
+use DecodeLabs\Stash\DriverConfig\Fallback as FallbackConfig;
 
 if (!defined('APC_ITER_KEY')) {
     define('APC_ITER_KEY', 2);
@@ -28,12 +27,9 @@ class Apcu implements Driver
     }
 
     public function __construct(
-        Stash $context,
-        array $settings
+        ?FallbackConfig $config = null
     ) {
-        $this->generatePrefix(
-            Coercion::tryString($settings['prefix'] ?? null)
-        );
+        $this->generatePrefix($config?->prefix);
     }
 
     public function store(
