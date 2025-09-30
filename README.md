@@ -15,6 +15,10 @@ Stash provides a PSR6 / PSR16 compatible cache system for PHP.
 
 ## Installation
 
+This package requires PHP 8.4 or higher.
+
+Install via Composer:
+
 ```bash
 composer require decodelabs/stash
 ```
