@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @package Stash
- * @license http://opensource.org/licenses/MIT
+ * Stash
+ * @license https://opensource.org/licenses/MIT
  */
 
 declare(strict_types=1);
