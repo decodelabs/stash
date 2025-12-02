@@ -28,7 +28,7 @@
         "nesbot/carbon": "^3"
     },
     "require-dev": {
-        "decodelabs/chorus": "^0.1",
+        "decodelabs/chorus": ">0",
         "decodelabs/commandment": "^0.3.0",
         "decodelabs/genesis": "^0.14",
         "decodelabs/phpstan-decodelabs": "^0.7",
