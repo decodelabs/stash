@@ -89,7 +89,7 @@ class DriverManager
             return $this->driverConfigs['default'];
         }
 
-        return $this->driverConfigs[array_key_first($this->driverConfigs)];
+        return $this->driverConfigs[array_key_first($this->driverConfigs) ?? 'Fallback'];
     }
 
     public function ensureDefaultDrivers(
