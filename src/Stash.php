@@ -39,8 +39,8 @@ class Stash implements Service
     protected array $fileStores = [];
 
     public function __construct(
-        protected(set) Archetype $archetype,
-        protected(set) DriverManager $driverManager,
+        public protected(set) Archetype $archetype,
+        public protected(set) DriverManager $driverManager,
     ) {
     }
 
